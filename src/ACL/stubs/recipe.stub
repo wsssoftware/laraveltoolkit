@@ -1,0 +1,22 @@
+<?php
+
+namespace {{ namespace }};
+
+
+class {{ class }} extends \Laraveltoolkit\ACL\UserPermission
+{
+    /**
+     * @inheritDoc
+     */
+    protected function declarePoliciesAndRoles(): void
+        {
+    //        self::registryPolicy('users', 'Usuários', 'Gerencia os usuários do sistema')
+    //            ->crud();
+    //        // OR
+    //        self::registryPolicy('users', 'Usuários', 'Gerencia os usuários do sistema')
+    //            ->rule('create', 'Criar', 'Cria um usuário no sistema')
+    //            ->rule('read', 'Ler', 'Ler um usuário no sistema')
+    //            ->rule('update', 'Atualizar', 'Atualizar um usuário no sistema')
+    //            ->rule('delete', 'Deletar', 'Deletar um usuário no sistema');
+        }
+}
