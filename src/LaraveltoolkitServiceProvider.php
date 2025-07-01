@@ -2,7 +2,6 @@
 
 namespace Laraveltoolkit;
 
-use Laraveltoolkit\Commands\LaraveltoolkitCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -16,10 +15,28 @@ class LaraveltoolkitServiceProvider extends PackageServiceProvider
          * More info: https://github.com/spatie/laravel-package-tools
          */
         $package
-            ->name('laraveltoolkit')
-            ->hasConfigFile()
-            ->hasViews()
-            ->hasMigration('create_laraveltoolkit_table')
-            ->hasCommand(LaraveltoolkitCommand::class);
+            ->name('laraveltoolkit');
+    }
+
+    public function boot(): self
+    {
+        $this->setLocale();
+
+        return parent::boot();
+    }
+
+    protected function setLocale(): void
+    {
+        setlocale(
+            LC_ALL,
+            config('app.locale').'.UTF-8',
+            config('app.locale'),
+            config('app.fallback_locale').'.UTF-8',
+            config('app.fallback_locale'),
+            'en.UTF-8',
+            'en',
+            'en_US.UTF-8',
+            'en_US',
+        );
     }
 }
