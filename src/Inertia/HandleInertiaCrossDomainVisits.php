@@ -16,24 +16,12 @@ class HandleInertiaCrossDomainVisits
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($this->validVisit($request)) {
-            return $next($request);
-        }
-        return Inertia::location($request->fullUrl());
-    }
+        return match (true) {
+            ! $request->headers->has('X-Inertia'),
+            ! $request->isMethod($request::METHOD_GET),
+            $request->host() === parse_url(url()->previous(), PHP_URL_HOST) => $next($request),
+            default => Inertia::location($request->fullUrl())
+        };
 
-    public function validVisit(Request $request): bool
-    {
-        if ($request->headers->has('X-Inertia')) {
-            return true;
-        }
-        if (!$request->isMethod($request::METHOD_GET)) {
-            return true;
-        }
-        if ($request->host() === parse_url(url()->previous(), PHP_URL_HOST)) {
-            return true;
-        }
-
-        return true;
     }
 }

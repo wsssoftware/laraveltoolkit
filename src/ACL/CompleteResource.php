@@ -20,14 +20,14 @@ class CompleteResource extends JsonResource
     {
         return $this->resource
             ->sortBy('name')
-            ->reduce(fn(Collection $c, Policy $p) => $c->merge($this->reducePolicy($p)), collect())
+            ->reduce(fn (Collection $c, Policy $p) => $c->merge($this->reducePolicy($p)), collect())
             ->values()
             ->toArray();
     }
 
     protected function reducePolicy(Policy $policy): Collection
     {
-        return $policy->rules->reduce(fn(Collection $c, Rule $r) => $c->merge($this->reduceRule($policy, $r)),
+        return $policy->rules->reduce(fn (Collection $c, Rule $r) => $c->merge($this->reduceRule($policy, $r)),
             collect());
     }
 

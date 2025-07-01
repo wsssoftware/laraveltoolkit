@@ -24,7 +24,7 @@ class Assets extends Collection implements Castable
 
     private function setUuid($value): void
     {
-        if (!empty($this->uuid)) {
+        if (! empty($this->uuid)) {
             return;
         } elseif ($value instanceof Asset) {
             $this->uuid = $value->assetsUuid;
@@ -42,7 +42,7 @@ class Assets extends Collection implements Castable
 
     public function toDatabase(): array
     {
-        return collect($this->items)->map(fn(Asset $asset) => $asset->toDatabase())->values()->toArray();
+        return collect($this->items)->map(fn (Asset $asset) => $asset->toDatabase())->values()->toArray();
     }
 
     public function __get($key): ?Asset

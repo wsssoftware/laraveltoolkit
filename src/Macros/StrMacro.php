@@ -21,7 +21,7 @@ class StrMacro
             $escape = false;
 
             foreach (str_split($mask) as $currentMaskChar) {
-                if ($currentMaskChar === '\\' && !$escape) {
+                if ($currentMaskChar === '\\' && ! $escape) {
                     $escape = true;
 
                     continue;
@@ -50,7 +50,7 @@ class StrMacro
                         $result .= $charInput;
                         $inputIndex++;
                         break;
-                    } elseif (!in_array($currentMaskChar, ['0', 'A', 'S'])) {
+                    } elseif (! in_array($currentMaskChar, ['0', 'A', 'S'])) {
                         $result .= $currentMaskChar;
                         break;
                     }
@@ -84,7 +84,7 @@ class StrMacro
                 ->explode(' ')
                 ->map(function (string $word) use ($toIgnore) {
                     $word = mb_strtolower($word);
-                    if (!in_array($word, $toIgnore)) {
+                    if (! in_array($word, $toIgnore)) {
                         $word = mb_strtoupper(mb_substr($word, 0, 1)).mb_substr($word, 1);
                     }
 

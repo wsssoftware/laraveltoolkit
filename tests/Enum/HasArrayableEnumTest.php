@@ -8,7 +8,7 @@ it('can convert enum into an array', function () {
     expect(FakeValidEnum::toEnumArray())
         ->toBeArray()
         ->toHaveCount(count(FakeValidEnum::cases()))
-        ->and(fn() => FakeInvalidEnum::toEnumArray())
+        ->and(fn () => FakeInvalidEnum::toEnumArray())
         ->toThrow('Laraveltoolkit\Tests\Enum\FakeInvalidEnum is not a valid enum');
 });
 

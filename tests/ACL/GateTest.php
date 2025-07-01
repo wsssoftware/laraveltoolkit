@@ -28,10 +28,10 @@ it('test null on not setted model and enum', function () {
 });
 
 it('test middleware', function () {
-    Route::get('/test1', fn() => 'ok')
+    Route::get('/test1', fn () => 'ok')
         ->middleware(['web', 'user_roles:user'])
         ->name('test1');
-    Route::get('/test2', fn() => 'ok')
+    Route::get('/test2', fn () => 'ok')
         ->middleware(['web', 'user_roles:admin'])
         ->name('test2');
 

@@ -33,11 +33,11 @@ class Step1 extends Step
         MaintenanceEnabledEvent::dispatch();
 
         $this->intents(1)
-            ->each(fn(Intent $intent) => $intent->call($this));
+            ->each(fn (Intent $intent) => $intent->call($this));
 
         $this->components->info('Step 1 finished, php deploy gain and choose step 2');
 
-        Cache::remember('deploy::must_offer_step_two_as_default', 300, fn() => true);
+        Cache::remember('deploy::must_offer_step_two_as_default', 300, fn () => true);
 
         return self::SUCCESS;
     }

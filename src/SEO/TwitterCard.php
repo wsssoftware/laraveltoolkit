@@ -26,7 +26,7 @@ class TwitterCard
         $this->description = config('laraveltoolkit.seo.defaults.twitter_card.description', $description);
         $imageConfig = config('laraveltoolkit.seo.defaults.twitter_card.image',
             ['disk' => null, 'path' => null, 'alt' => null]);
-        if (!empty($imageConfig['disk']) && !empty($imageConfig['path'])) {
+        if (! empty($imageConfig['disk']) && ! empty($imageConfig['path'])) {
             $this->image = new Image(
                 Arr::get($imageConfig, 'disk'),
                 Arr::get($imageConfig, 'path'),

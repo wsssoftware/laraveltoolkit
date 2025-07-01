@@ -23,7 +23,7 @@ abstract class ExtendedFluent extends Fluent
             $method->getReturnType()?->getName() === Attribute::class &&
             $method->getNumberOfParameters() === 0
         ) {
-            return rescue(fn() => $method->invoke($this), null, false);
+            return rescue(fn () => $method->invoke($this), null, false);
         }
 
         return null;
@@ -33,7 +33,7 @@ abstract class ExtendedFluent extends Fluent
     {
         if ($attribute = $this->getAttribute($offset)) {
             $callable = $attribute->set;
-            $value = !empty($callable) ? $callable($value) : $value;
+            $value = ! empty($callable) ? $callable($value) : $value;
         }
         parent::offsetSet($offset, $value);
     }
@@ -43,7 +43,7 @@ abstract class ExtendedFluent extends Fluent
         $value = parent::value($key, $default);
         if ($attribute = $this->getAttribute($key)) {
             $callable = $attribute->get;
-            $value = !empty($callable) ? $callable($value) : $value;
+            $value = ! empty($callable) ? $callable($value) : $value;
         }
 
         return $value;

@@ -63,50 +63,50 @@ it('can send messages with options', function () {
 
 it('test test assert flashed', function () {
     Flash::clear();
-    expect(fn() => Flash::assertFlashed())
+    expect(fn () => Flash::assertFlashed())
         ->toThrow('Was expected a flash of "any" severity but was not found');
 
     Flash::clear();
     Flash::success('ok');
-    expect(fn() => Flash::assertFlashed())
+    expect(fn () => Flash::assertFlashed())
         ->not
         ->toThrow('Was expected a flash of "any" severity but was not found');
 
     Flash::clear();
     Flash::success('ok');
-    expect(fn() => Flash::assertFlashed(Severity::INFO))
+    expect(fn () => Flash::assertFlashed(Severity::INFO))
         ->toThrow('Was expected a flash of "info" severity but was not found')
-        ->and(fn() => Flash::assertFlashed(Severity::SUCCESS))
+        ->and(fn () => Flash::assertFlashed(Severity::SUCCESS))
         ->not
         ->toThrow('Was expected a flash of "success" severity but was not found');
 
     Flash::clear();
     Flash::success('ok');
-    expect(fn() => Flash::assertFlashed(countOrMessage: 'foo'))
+    expect(fn () => Flash::assertFlashed(countOrMessage: 'foo'))
         ->toThrow('Was expected a flash of "any" severity with detail of "foo" but was not found')
-        ->and(fn() => Flash::assertFlashed(countOrMessage: 'ok'))
+        ->and(fn () => Flash::assertFlashed(countOrMessage: 'ok'))
         ->not
         ->toThrow('Was expected a flash of "any" severity but was not found');
 
     Flash::clear();
     Flash::success('ok');
     Flash::success('ok');
-    expect(fn() => Flash::assertFlashed(countOrMessage: 3))
+    expect(fn () => Flash::assertFlashed(countOrMessage: 3))
         ->toThrow('Was expected 3 flashes from "any" severity but was found 2')
-        ->and(fn() => Flash::assertFlashed(countOrMessage: 2))
+        ->and(fn () => Flash::assertFlashed(countOrMessage: 2))
         ->not
         ->toThrow('Was expected 2 flashes from "any" severity but was found 2');
 });
 
 it('test test assert not flashed', function () {
     Flash::clear();
-    expect(fn() => Flash::assertNotFlashed())
+    expect(fn () => Flash::assertNotFlashed())
         ->not
         ->toThrow('Was expected none flashes of "any" severity but was found 1');
 
     Flash::clear();
     Flash::success('ok');
-    expect(fn() => Flash::assertNotFlashed())
+    expect(fn () => Flash::assertNotFlashed())
         ->toThrow('Was expected none flashes of "any" severity but was found 1');
 
     Flash::clear();
@@ -114,11 +114,11 @@ it('test test assert not flashed', function () {
     Flash::success('ok');
     Flash::success('ok');
     Flash::error('ok');
-    expect(fn() => Flash::assertNotFlashed(Severity::SUCCESS))
+    expect(fn () => Flash::assertNotFlashed(Severity::SUCCESS))
         ->toThrow('Was expected none flashes of "success" severity but was found 3')
-        ->and(fn() => Flash::assertNotFlashed(Severity::ERROR))
+        ->and(fn () => Flash::assertNotFlashed(Severity::ERROR))
         ->toThrow('Was expected none flashes of "error" severity but was found 1')
-        ->and(fn() => Flash::assertNotFlashed(Severity::INFO))
+        ->and(fn () => Flash::assertNotFlashed(Severity::INFO))
         ->not
         ->toThrow('Was expected none flashes of "info" severity but was found 1');
 });

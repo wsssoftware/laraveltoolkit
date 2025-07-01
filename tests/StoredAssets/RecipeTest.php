@@ -10,7 +10,7 @@ use Laraveltoolkit\Tests\Model\Product;
 use Laraveltoolkit\Tests\Model\ProductImageRecipe;
 
 it('test fail parse directly from Recipe class', function () {
-    expect(fn() => Recipe::parse(new Product, 'image', ''))
+    expect(fn () => Recipe::parse(new Product, 'image', ''))
         ->toThrow('You cannot call parse directly from Recipe class');
 });
 
@@ -37,7 +37,7 @@ it('test parse method', function () {
         ->toEqual($recipe)
         ->and(ProductImageRecipe::parse($model, 'image', $validUuid))
         ->toBeUuid()
-        ->and(fn() => ProductImageRecipe::parse($model, 'image', $invalidUuid))
+        ->and(fn () => ProductImageRecipe::parse($model, 'image', $invalidUuid))
         ->toThrow("On field \"image\" from model \"Laraveltoolkit\Tests\Model\Product\", the the provided value \"$invalidUuid\" does not appears to be a valid uuid or does not exists on \"stored_assets\" table.");
 });
 
@@ -47,7 +47,7 @@ it('test fail on duplicated key', function () {
 
     expect($recipe = InvalidProductImageRecipe::parse($model, 'image', $uploadedFile))
         ->toBeInstanceOf(InvalidProductImageRecipe::class)
-        ->and(fn() => $recipe->save())
+        ->and(fn () => $recipe->save())
         ->toThrow('You may not has two asset with same name key. 2 found on "default');
 });
 

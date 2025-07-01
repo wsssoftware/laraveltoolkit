@@ -1,14 +1,44 @@
 <?php
 
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Laraveltoolkit\Inertia\HandleInertiaCrossDomainVisits;
 
 const CONTENT = 'used next';
 
-$successClosure = fn() => new \Symfony\Component\HttpFoundation\Response(CONTENT);
+$successClosure = fn () => new \Symfony\Component\HttpFoundation\Response(CONTENT);
 
-it('pass on get visit on same host and using inertia header', function () use ($successClosure) {
+it('has normal response when without Inertia header', function () use ($successClosure) {
     $url = 'http://localhost';
+    $request = Request::create($url);
+
+    /** @var \Laraveltoolkit\Inertia\HandleInertiaCrossDomainVisits $middleware */
+    $middleware = app(HandleInertiaCrossDomainVisits::class);
+
+    $response = $middleware->handle($request, $successClosure);
+    expect($response->getContent())
+        ->toBe(CONTENT);
+
+});
+
+it('has normal response when not GET method', function () use ($successClosure) {
+    $url = 'http://localhost';
+
+    $request = Request::create($url, 'POST');
+    $request->headers->set('X-Inertia', true);
+
+    /** @var \Laraveltoolkit\Inertia\HandleInertiaCrossDomainVisits $middleware */
+    $middleware = app(HandleInertiaCrossDomainVisits::class);
+
+    $response = $middleware->handle($request, $successClosure);
+    expect($response->getContent())
+        ->toBe(CONTENT);
+
+});
+
+it('has normal response when host equal', function () use ($successClosure) {
+    $url = 'http://localhost';
+
     $request = Request::create($url);
     $request->headers->set('X-Inertia', true);
 
@@ -21,15 +51,19 @@ it('pass on get visit on same host and using inertia header', function () use ($
 
 });
 
-it('has inertia header missing', function () use ($successClosure) {
-    $url = 'http://localhost';
+it('has location response due different domain', function () use ($successClosure) {
+    $url = 'http://b.localhost';
+
     $request = Request::create($url);
+    $request->headers->set('X-Inertia', true);
 
     /** @var \Laraveltoolkit\Inertia\HandleInertiaCrossDomainVisits $middleware */
     $middleware = app(HandleInertiaCrossDomainVisits::class);
 
     $response = $middleware->handle($request, $successClosure);
-    expect($response->getContent())
-        ->toBe(CONTENT);
+    expect($response)
+        ->toBeInstanceOf(RedirectResponse::class)
+        ->and($response->headers->has('Location'))
+        ->toBeTrue();
 
 });

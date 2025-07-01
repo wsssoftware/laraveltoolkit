@@ -39,14 +39,14 @@ class AssetIntent
         $resource = tmpfile();
         fwrite($resource, $content);
         fseek($resource, 0);
-        register_shutdown_function(fn() => fclose($resource));
+        register_shutdown_function(fn () => fclose($resource));
 
         return static::create(stream_get_meta_data($resource)['uri']);
     }
 
     public static function createFromResource(mixed $resource): self
     {
-        throw_if(!is_resource($resource), Exception::class, 'Invalid resource');
+        throw_if(! is_resource($resource), Exception::class, 'Invalid resource');
 
         return static::create(stream_get_meta_data($resource)['uri']);
     }
@@ -125,7 +125,7 @@ class AssetIntent
     public function withKey(string $key): self
     {
         throw_if(
-            !Regex::isLikePhpVariableChars($key),
+            ! Regex::isLikePhpVariableChars($key),
             Exception::class,
             "\"$key\" is not a valid asset key."
         );

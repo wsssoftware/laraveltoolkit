@@ -14,7 +14,7 @@ class Process
         $input = $request->file('filepond');
 
         if (empty($input)) {
-            $dontHasLength = !is_numeric($request->header('upload_length'));
+            $dontHasLength = ! is_numeric($request->header('upload_length'));
             abort_if($dontHasLength, Abortable::make('Invalid upload'));
             Filepond::disk()->createDirectory(Filepond::path($id));
 
@@ -28,9 +28,9 @@ class Process
             Filepond::diskName(),
         );
 
-        abort_if(!$savedFile, Abortable::make('Could not save file'));
+        abort_if(! $savedFile, Abortable::make('Could not save file'));
 
-        defer(fn() => Filepond::garbageCollector());
+        defer(fn () => Filepond::garbageCollector());
 
         return response($id, 200, ['Content-Type' => 'text/plain']);
     }

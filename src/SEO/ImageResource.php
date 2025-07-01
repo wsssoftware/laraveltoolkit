@@ -24,7 +24,7 @@ class ImageResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'alt' => $this->when(!empty($this->resource->alt), $this->resource->alt),
+            'alt' => $this->when(! empty($this->resource->alt), $this->resource->alt),
             'url' => $this->resource->toUrl(),
         ];
     }
