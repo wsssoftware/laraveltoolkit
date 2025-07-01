@@ -17,12 +17,12 @@ class OnlyValueResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return $this->resource->reduce(fn(array $c, Policy $p) => $c + $this->reducePolicy($p), []);
+        return $this->resource->reduce(fn (array $c, Policy $p) => $c + $this->reducePolicy($p), []);
     }
 
     protected function reducePolicy(Policy $policy): array
     {
-        return $policy->rules->reduce(fn(array $c, Rule $r) => $c + $this->reduceRule($policy, $r), []);
+        return $policy->rules->reduce(fn (array $c, Rule $r) => $c + $this->reduceRule($policy, $r), []);
     }
 
     protected function reduceRule(Policy $policy, Rule $rule): array

@@ -31,7 +31,7 @@ class CacheApplication extends Action
         $isProduction = app()->isProduction();
 
         $this->spin(
-            fn() => $this->callSilent('cache:clear'),
+            fn () => $this->callSilent('cache:clear'),
             'Clearing cache...',
             'Cache cleared successfully!',
             'Cache clear failed!'
@@ -42,57 +42,57 @@ class CacheApplication extends Action
             confirm('This isn\'t a production application, do you want to cache route, config and views?', false)
         ) {
             $this->spin(
-                fn() => $this->callSilent('route:cache'),
+                fn () => $this->callSilent('route:cache'),
                 'Caching routes...',
                 'Routes cached successfully!',
                 'Routes cache failed!'
             );
 
             $this->spin(
-                fn() => $this->callSilent('config:cache'),
+                fn () => $this->callSilent('config:cache'),
                 'Caching config...',
                 'Config cached successfully!',
                 'Config cache failed!'
             );
             $this->spin(
-                fn() => $this->callSilent('event:cache'),
+                fn () => $this->callSilent('event:cache'),
                 'Caching events...',
                 'Events cached successfully!',
                 'Events cache failed!'
             );
             $this->spin(
-                fn() => $this->callSilent('view:cache'),
+                fn () => $this->callSilent('view:cache'),
                 'Caching views...',
                 'Views cached successfully!',
                 'Views cache failed!'
             );
             $this->spin(
-                fn() => $this->callSilent('storage:link'),
+                fn () => $this->callSilent('storage:link'),
                 'Linking storage...',
                 'Storage linked successfully!',
                 'Storage link failed!'
             );
         } else {
             $this->spin(
-                fn() => $this->callSilent('route:clear'),
+                fn () => $this->callSilent('route:clear'),
                 'Clearing routes...',
                 'Routes cleared successfully!',
                 'Routes clear failed!'
             );
             $this->spin(
-                fn() => $this->callSilent('config:clear'),
+                fn () => $this->callSilent('config:clear'),
                 'Clearing config...',
                 'Config cleared successfully!',
                 'Config clear failed!'
             );
             $this->spin(
-                fn() => $this->callSilent('event:clear'),
+                fn () => $this->callSilent('event:clear'),
                 'Clearing events...',
                 'Events cleared successfully!',
                 'Events clear failed!'
             );
             $this->spin(
-                fn() => $this->callSilent('view:clear'),
+                fn () => $this->callSilent('view:clear'),
                 'Clearing views...',
                 'Views cleared successfully!',
                 'Views clear failed!'

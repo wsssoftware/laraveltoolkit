@@ -10,11 +10,11 @@ trait FlashTests
     {
         $messages = $this->messages;
         if ($severity) {
-            $messages = $messages->filter(fn(Message $message) => $message->severity === $severity);
+            $messages = $messages->filter(fn (Message $message) => $message->severity === $severity);
         }
         $severity = $severity?->value ?? 'any';
         if (is_string($countOrMessage)) {
-            $messages = $messages->filter(fn(Message $message) => $message->detail === $countOrMessage);
+            $messages = $messages->filter(fn (Message $message) => $message->detail === $countOrMessage);
         }
         if (is_int($countOrMessage)) {
             PHPUnit::assertCount(
@@ -42,7 +42,7 @@ trait FlashTests
     {
         $messages = $this->messages;
         if ($severity) {
-            $messages = $messages->filter(fn(Message $message) => $message->severity === $severity);
+            $messages = $messages->filter(fn (Message $message) => $message->severity === $severity);
         }
         $severity = $severity?->value ?? 'any';
         PHPUnit::assertTrue(

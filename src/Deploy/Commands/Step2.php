@@ -29,7 +29,7 @@ class Step2 extends Step
     {
         $this->components->alert('Deploying application Step 2');
         $this->intents(2)
-            ->each(fn(Intent $intent) => $intent->call($this));
+            ->each(fn (Intent $intent) => $intent->call($this));
 
         $this->call('up');
         Cache::forget('deploy::must_offer_step_two_as_default');

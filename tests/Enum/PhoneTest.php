@@ -13,7 +13,7 @@ it('can guess from number', function () {
         ->toBe(Phone::NON_REGIONAL)
         ->and(Phone::guessType('123'))
         ->toBe(Phone::PUBLIC_SERVICES)
-        ->and(fn() => Phone::GENERIC->appearsToBe('213'))
+        ->and(fn () => Phone::GENERIC->appearsToBe('213'))
         ->toThrow('Appears to be method is not allowed to generic type');
 
 });

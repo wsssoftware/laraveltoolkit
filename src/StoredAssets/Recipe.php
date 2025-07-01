@@ -36,9 +36,9 @@ abstract class Recipe implements Castable
 
     private function ensureNotDuplicated(Collection $assets): void
     {
-        $assets->unique(fn($o) => spl_object_id($o))
-            ->groupBy(fn(AssetIntent $intent) => $intent->getKey())
-            ->each(fn(Collection $group, string $key) => throw_if($group->count() > 1, Exception::class, sprintf(
+        $assets->unique(fn ($o) => spl_object_id($o))
+            ->groupBy(fn (AssetIntent $intent) => $intent->getKey())
+            ->each(fn (Collection $group, string $key) => throw_if($group->count() > 1, Exception::class, sprintf(
                 'You may not has two asset with same name key. %s found on "%s"',
                 $group->count(),
                 $key
@@ -53,7 +53,7 @@ abstract class Recipe implements Castable
         $uuid = Str::uuid()->toString();
 
         $assets = $assets->reduce(
-            fn(Assets $carry, AssetIntent $intent) => $carry->put($intent->getKey(), $intent->store($uuid)),
+            fn (Assets $carry, AssetIntent $intent) => $carry->put($intent->getKey(), $intent->store($uuid)),
             new Assets
         );
 
@@ -72,7 +72,7 @@ abstract class Recipe implements Castable
         } elseif (is_null($source)) {
             return null;
         }
-        throw_if(!StoredAssets::isValidUuidAsset($source), Exception::class, sprintf(
+        throw_if(! StoredAssets::isValidUuidAsset($source), Exception::class, sprintf(
             'On field "%s" from model "%s", the the provided value "%s" does not appears to be a valid uuid or does not exists on "%s" table.',
             $field,
             $model::class,

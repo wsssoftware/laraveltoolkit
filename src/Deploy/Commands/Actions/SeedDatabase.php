@@ -28,7 +28,7 @@ class SeedDatabase extends Action
         }
 
         $this->spin(
-            fn() => $this->callSilent('db:seed', ['--force' => true]),
+            fn () => $this->callSilent('db:seed', ['--force' => true]),
             'Seeding database...',
             'Database seeded successfully!',
             'Database seed failed!'

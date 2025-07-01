@@ -27,7 +27,7 @@ class TerminateHorizon extends Action
             return self::SUCCESS;
         }
         $this->spin(
-            fn() => $this->callSilent('horizon:terminate'),
+            fn () => $this->callSilent('horizon:terminate'),
             'Terminating Horizon...',
             'Horizon terminated successfully!',
             'Horizon could not be terminated.'

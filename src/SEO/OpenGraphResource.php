@@ -26,9 +26,9 @@ class OpenGraphResource extends JsonResource
         return [
             'type' => $this->resource->type,
             'title' => $this->resource->title,
-            'description' => $this->when(!empty($this->resource->description), fn() => $this->resource->description),
-            'url' => $this->when(!empty($this->resource->url), fn() => $this->resource->url),
-            'image' => $this->when(!empty($this->resource->image), fn() => ImageResource::make($this->resource->image)),
+            'description' => $this->when(! empty($this->resource->description), fn () => $this->resource->description),
+            'url' => $this->when(! empty($this->resource->url), fn () => $this->resource->url),
+            'image' => $this->when(! empty($this->resource->image), fn () => ImageResource::make($this->resource->image)),
         ];
     }
 }

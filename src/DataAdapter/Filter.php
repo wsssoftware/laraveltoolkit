@@ -18,8 +18,7 @@ readonly class Filter
         public Operator $operator,
         public Collection $constraints,
         public bool $global,
-    ) {
-    }
+    ) {}
 
     /**
      * @return \Illuminate\Support\Collection<string, \Laraveltoolkit\DataAdapter\Filter>|null
@@ -31,10 +30,10 @@ readonly class Filter
         }
 
         $collection = collect($filters)
-            ->mapWithKeys(fn(array $filter, string $key) => [
+            ->mapWithKeys(fn (array $filter, string $key) => [
                 $key => self::createItem($key, $globalFilterName, $filter, $builder),
             ])
-            ->filter(fn($filter) => $filter instanceof Filter);
+            ->filter(fn ($filter) => $filter instanceof Filter);
 
         return $collection->count() > 0 ? $collection : null;
     }
@@ -46,10 +45,10 @@ readonly class Filter
         EloquentBuilder $builder
     ): ?Filter {
         $operatorValue = trim(Arr::get($data, 'operator', 'and'));
-        $operator = Operator::tryFrom(!empty($operatorValue) ? $operatorValue : 'and');
+        $operator = Operator::tryFrom(! empty($operatorValue) ? $operatorValue : 'and');
         $constraints = collect(Arr::get($data, 'constraints', [$data]))
-            ->map(fn(array $constraint) => Constraint::create($constraint))
-            ->filter(fn($filter) => $filter instanceof Constraint);
+            ->map(fn (array $constraint) => Constraint::create($constraint))
+            ->filter(fn ($filter) => $filter instanceof Constraint);
         $valid = $constraints->isNotEmpty() && $operator !== null;
 
         return $valid
@@ -84,8 +83,8 @@ readonly class Filter
 
     public function apply(QueryBuilder $builder): void
     {
-        $builder->whereNested(fn(QueryBuilder $query) => $this->constraints->each(
-            fn(Constraint $constraint) => $constraint->matchMode->apply(
+        $builder->whereNested(fn (QueryBuilder $query) => $this->constraints->each(
+            fn (Constraint $constraint) => $constraint->matchMode->apply(
                 $query,
                 $this->field,
                 $constraint->value,

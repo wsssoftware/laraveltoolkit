@@ -24,14 +24,15 @@ class AsExtendedFluent implements Castable
     public static function castUsing(array $arguments): CastsAttributes
     {
 
-        return new class($arguments[0]) implements CastsAttributes {
+        return new class($arguments[0]) implements CastsAttributes
+        {
             public function __construct(
                 public readonly string $fqn
             ) {
-                throw_if(!class_exists($this->fqn),
+                throw_if(! class_exists($this->fqn),
                     new \InvalidArgumentException("Class {$this->fqn} does not exist."));
                 throw_if(
-                    !is_subclass_of($this->fqn, ExtendedFluent::class),
+                    ! is_subclass_of($this->fqn, ExtendedFluent::class),
                     new \InvalidArgumentException("Class {$this->fqn} does not extend ExtendedFluent.")
                 );
             }

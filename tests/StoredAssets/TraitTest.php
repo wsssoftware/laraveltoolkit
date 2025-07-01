@@ -53,7 +53,8 @@ it('can fail on save', function () {
 
     StoredAssets::partialMock()->shouldReceive('newModel')
         ->once()
-        ->andReturn(new class extends StoredAssetModel {
+        ->andReturn(new class extends StoredAssetModel
+        {
             public function save(array $options = []): bool
             {
                 return false;
