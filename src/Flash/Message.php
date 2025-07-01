@@ -15,8 +15,7 @@ class Message
         public ?int $life,
         public ?string $group,
         readonly public float $createdAt
-    ) {
-    }
+    ) {}
 
     public static function create(
         Severity $severity,

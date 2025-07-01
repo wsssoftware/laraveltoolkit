@@ -17,7 +17,7 @@ class LengthAwarePaginator extends \Illuminate\Pagination\LengthAwarePaginator
     public function __construct($items, $total, $perPage, $currentPage = null, array $options = [])
     {
         $mapOrResource = self::$mapOrResource;
-        if (!is_null($mapOrResource) && $items instanceof Collection) {
+        if (! is_null($mapOrResource) && $items instanceof Collection) {
             if ($mapOrResource instanceof Closure) {
                 $items->transform($mapOrResource);
             } elseif (class_exists($mapOrResource) && is_subclass_of($mapOrResource, JsonResource::class)) {

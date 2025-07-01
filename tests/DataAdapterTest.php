@@ -343,7 +343,7 @@ it('test closure functionality', function () {
     User::factory()->count(100)->create();
     Route::getAndPost('/', function () {
         return response()->json([
-            'users' => User::query()->primevueData('foo', mapOrResource: fn(User $user) => ['id' => $user->id]),
+            'users' => User::query()->primevueData('foo', mapOrResource: fn (User $user) => ['id' => $user->id]),
         ]);
     });
 

@@ -28,11 +28,11 @@ class MergeChunkFile
     public function __invoke(): void
     {
         $chunks = Filepond::chunks($this->id);
-        $processedChunks = $chunks->reduce(fn(int $carry, string $path) => $this->mergeChunk($carry, $path), 0);
+        $processedChunks = $chunks->reduce(fn (int $carry, string $path) => $this->mergeChunk($carry, $path), 0);
         abort_if($processedChunks !== $chunks->count(), Abortable::make('Something went wrong'));
         rewind($this->file);
         $saved = Filepond::disk()->put($this->outputPath, $this->file);
-        abort_if(!$saved, Abortable::make('Something went wrong while writing file'));
+        abort_if(! $saved, Abortable::make('Something went wrong while writing file'));
         fclose($this->file);
     }
 

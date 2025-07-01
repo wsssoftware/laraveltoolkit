@@ -13,7 +13,7 @@ trait ManagementTrait
         $this->policies = collect();
         $this->declarePoliciesAndRoles();
         $this->policies = $this->policies
-            ->map(fn(Policy|PolicyMaker $p) => $p instanceof PolicyMaker ? $p->toPolicy() : $p);
+            ->map(fn (Policy|PolicyMaker $p) => $p instanceof PolicyMaker ? $p->toPolicy() : $p);
         $this->fillable[] = 'id';
         $this->fillable[] = 'roles';
         foreach ($this->policies as $policy) {
@@ -81,7 +81,7 @@ trait ManagementTrait
     {
         $enumType = ACL::rolesEnum();
         throw_if($enumType === null, Exception::class, 'You must configure RoleEnum before use it');
-        throw_if(!$role instanceof $enumType, Exception::class, 'Enum must to be instance of '.$enumType);
+        throw_if(! $role instanceof $enumType, Exception::class, 'Enum must to be instance of '.$enumType);
         $collection = $this->roles;
         $collection->put($role->value, $role);
         $this->roles = $collection;
@@ -105,7 +105,7 @@ trait ManagementTrait
 
     public function denyRole(BackedEnum $role): self
     {
-        $this->roles = $this->roles->filter(fn(BackedEnum $r) => $r->value !== $role->value);
+        $this->roles = $this->roles->filter(fn (BackedEnum $r) => $r->value !== $role->value);
 
         return $this;
     }

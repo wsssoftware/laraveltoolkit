@@ -48,7 +48,7 @@ class Run extends Command
 
     protected function getLabel(int $step): string
     {
-        $items = $this->intents($step)->map(fn(Intent $item) => $item->shortLabel());
+        $items = $this->intents($step)->map(fn (Intent $item) => $item->shortLabel());
 
         return sprintf(
             'Step %d: (%s)',

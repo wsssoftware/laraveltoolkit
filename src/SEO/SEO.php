@@ -62,23 +62,23 @@ class SEO
             $lines->push("User-agent: $rule->userAgent");
             $lines->push(
                 $rule->allow->isNotEmpty()
-                    ? $rule->allow->map(fn(string $path) => "Allow: $path".PHP_EOL)->implode('')
+                    ? $rule->allow->map(fn (string $path) => "Allow: $path".PHP_EOL)->implode('')
                     : false
             );
             $lines->push(
                 $rule->disallow->isNotEmpty()
-                    ? $rule->disallow->map(fn(string $path) => "Disallow: $path".PHP_EOL)->implode('')
+                    ? $rule->disallow->map(fn (string $path) => "Disallow: $path".PHP_EOL)->implode('')
                     : false
             );
             $lines->push('');
         }
         $sitemap = $this->payload->robotsTxt->sitemap;
-        if (!empty($sitemap)) {
+        if (! empty($sitemap)) {
             $lines->push("Sitemap: $sitemap");
         }
 
         return $lines
-            ->filter(fn($line) => $line !== false)
+            ->filter(fn ($line) => $line !== false)
             ->implode(PHP_EOL);
     }
 
@@ -284,7 +284,7 @@ class SEO
     {
         $this->payload->robots = collect($items)
             ->map(
-                fn(string|RobotRule $item) => is_string($item)
+                fn (string|RobotRule $item) => is_string($item)
                     ? [RobotRule::from(explode(':', $item)[0]), explode(':', $item)[1] ?? null]
                     : [$item, null]
             );

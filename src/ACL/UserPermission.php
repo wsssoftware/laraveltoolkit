@@ -63,7 +63,7 @@ abstract class UserPermission extends Model
             $policies = $policies->filter($filter);
         }
 
-        return !empty($column) ? $policies->get($column) : $policies;
+        return ! empty($column) ? $policies->get($column) : $policies;
     }
 
     final public function casts(): array

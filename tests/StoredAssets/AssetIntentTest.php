@@ -117,7 +117,7 @@ it('test intent options', function () {
         ->toBeInstanceOf(AssetIntent::class)
         ->and($class->getProperty('options')->getValue($intent))
         ->toBe(['foo' => 'bar'])
-        ->and(fn() => $intent->withKey('$inv@lid'))
+        ->and(fn () => $intent->withKey('$inv@lid'))
         ->toThrow('"$inv@lid" is not a valid asset key.');
 });
 
@@ -135,7 +135,7 @@ it('test get content resource', function () {
         ->toBeResource()
         ->and($intent2)
         ->toBeInstanceOf(AssetIntent::class)
-        ->and(fn() => $class->getMethod('getContentStream')->invoke($intent2))
+        ->and(fn () => $class->getMethod('getContentStream')->invoke($intent2))
         ->toThrow('Unable to read file from location: /invalid/path/name.');
 });
 

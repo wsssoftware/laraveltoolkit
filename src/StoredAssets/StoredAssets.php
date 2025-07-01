@@ -22,8 +22,8 @@ class StoredAssets
     {
         $disk = Storage::disk($disk);
         $uuids = collect($disk->directories($this->trashBinPath()))
-            ->map(fn(string $path) => substr($path, -36, 36))
-            ->filter(fn(string $uuid) => Str::isUuid($uuid));
+            ->map(fn (string $path) => substr($path, -36, 36))
+            ->filter(fn (string $uuid) => Str::isUuid($uuid));
         if ($uuids->isEmpty()) {
             return 0;
         }
@@ -49,7 +49,7 @@ class StoredAssets
         $disk = Storage::disk($disk);
 
         $path = collect($disk->directories($this->trashBinPath()))
-            ->filter(fn(string $path) => str_ends_with($path, $uuid))
+            ->filter(fn (string $path) => str_ends_with($path, $uuid))
             ->first();
         if (empty($path)) {
             return false;
@@ -61,7 +61,7 @@ class StoredAssets
 
     public function isValidUuidAsset(string $uuid): bool
     {
-        if (!Str::isUuid($uuid)) {
+        if (! Str::isUuid($uuid)) {
             return false;
         }
 
@@ -93,7 +93,7 @@ class StoredAssets
         $trimmedTo = str($to)->trim('/')->trim('\\')->toString();
         $toCopy = collect($disk->files($from, true))
             ->mapWithKeys(
-                fn(string $path) => [
+                fn (string $path) => [
                     $path => str($path)
                         ->trim('/')
                         ->trim('\\')
@@ -102,7 +102,7 @@ class StoredAssets
                 ]
             );
         foreach ($toCopy as $copyFrom => $copyTo) {
-            if (!$disk->copy($copyFrom, $copyTo)) {
+            if (! $disk->copy($copyFrom, $copyTo)) {
                 Log::warning(
                     sprintf('Failed to create a copy from "%s" to  "%s"', $from, $to)
                 );
@@ -110,7 +110,7 @@ class StoredAssets
                 return false;
             }
         }
-        if (!$disk->deleteDirectory($from)) {
+        if (! $disk->deleteDirectory($from)) {
             Log::warning(
                 sprintf('Failed to delete original directory "%s" after creating a copy to "%s".', $from, $to)
             );
@@ -126,7 +126,7 @@ class StoredAssets
         $disk = Storage::disk($disk);
         $originalPath = $this->path($uuid);
         $trashBinUuidFolderName = sprintf('%s-%s', $this->trashBinDeadlineTimestamp(), $uuid);
-        if (!$disk->exists($originalPath)) {
+        if (! $disk->exists($originalPath)) {
             return false;
         }
 
@@ -155,7 +155,7 @@ class StoredAssets
         $disk = Storage::disk($disk);
 
         $path = collect($disk->directories($this->trashBinPath()))
-            ->filter(fn(string $path) => str_ends_with($path, $uuid))
+            ->filter(fn (string $path) => str_ends_with($path, $uuid))
             ->first();
         if (empty($path)) {
             return false;

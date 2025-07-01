@@ -43,8 +43,8 @@ class GarbageCollector implements ShouldBeUnique, ShouldQueue
 
         foreach ($subDirectories as $subDirectory) {
             $collection = collect($disk->directories($subDirectory))
-                ->map(fn(string $path) => str($path)->trim('/')->afterLast('/'))
-                ->filter(fn(string $uuid) => Str::isUuid($uuid));
+                ->map(fn (string $path) => str($path)->trim('/')->afterLast('/'))
+                ->filter(fn (string $uuid) => Str::isUuid($uuid));
             if ($collection->isEmpty()) {
                 $disk->deleteDirectory($subDirectory);
 
@@ -52,18 +52,18 @@ class GarbageCollector implements ShouldBeUnique, ShouldQueue
             }
             do {
                 $inspectedUuids = $collection->pop(200)
-                    ->mapWithKeys(fn(string $uuid) => [$uuid => $uuid]);
+                    ->mapWithKeys(fn (string $uuid) => [$uuid => $uuid]);
                 StoredAssets::modelQuery()
                     ->select('model', 'field')
                     ->whereIn('id', $inspectedUuids)
                     ->get()
-                    ->groupBy(fn(StoredAssetModel $asset) => "$asset->field::$asset->model")
-                    ->each(fn(Collection $group) => $this->inspectGroup($group, $inspectedUuids));
+                    ->groupBy(fn (StoredAssetModel $asset) => "$asset->field::$asset->model")
+                    ->each(fn (Collection $group) => $this->inspectGroup($group, $inspectedUuids));
 
                 /** @var Collection $result */
-                $result = $inspectedUuids->mapWithKeys(fn(string $uuid
+                $result = $inspectedUuids->mapWithKeys(fn (string $uuid
                 ) => [$uuid => StoredAssets::moveToTrashBin($this->disk, $uuid)]);
-                self::incrementCount($result->filter(fn(bool $success) => $success)->count());
+                self::incrementCount($result->filter(fn (bool $success) => $success)->count());
             } while ($collection->count() > 0);
         }
     }
@@ -101,7 +101,7 @@ class GarbageCollector implements ShouldBeUnique, ShouldQueue
 
     public static function getCount(): int
     {
-        return Cache::get(self::MOVED_COUNT_CACHE_KEY, fn() => 0);
+        return Cache::get(self::MOVED_COUNT_CACHE_KEY, fn () => 0);
     }
 
     public static function clearCount(): void

@@ -32,7 +32,7 @@ class ComposerUpdate extends Action
         }
 
         $process = new Process($cmd, $this->getCwdOption(), env: ['COMPOSER_ALLOW_SUPERUSER' => '1'], timeout: 300);
-        $result = spin(fn() => $process->run(), $label);
+        $result = spin(fn () => $process->run(), $label);
         if ($result === 0) {
             $this->components->info('Composer updated successfully!');
         } else {

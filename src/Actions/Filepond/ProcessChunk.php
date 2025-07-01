@@ -28,7 +28,7 @@ class ProcessChunk
 
         $offset = $request->server('HTTP_UPLOAD_OFFSET');
         abort_if(
-            !is_numeric($offset) || !is_numeric($request->server('HTTP_UPLOAD_LENGTH')),
+            ! is_numeric($offset) || ! is_numeric($request->server('HTTP_UPLOAD_LENGTH')),
             Abortable::make('Invalid chunk length or offset')
         );
 
@@ -48,7 +48,7 @@ class ProcessChunk
             return 204;
         }
         $outputFilename = $this->request->headers->get('upload-name');
-        $isInvalid = empty($outputFilename) || !is_string($outputFilename);
+        $isInvalid = empty($outputFilename) || ! is_string($outputFilename);
         abort_if($isInvalid, Abortable::make('No file name provided'));
         (new MergeChunkFile($this->id, $outputFilename))();
         defer(function () {

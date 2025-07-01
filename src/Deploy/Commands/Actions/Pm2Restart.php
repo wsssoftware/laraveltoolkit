@@ -31,7 +31,7 @@ class Pm2Restart extends Action
             return self::SUCCESS;
         }
         $process = new Process(['pm2', 'status']);
-        $result = spin(fn() => $process->run(), 'Checking PM2 status...');
+        $result = spin(fn () => $process->run(), 'Checking PM2 status...');
         if ($result !== 0) {
             $this->components->warn('PM2 is not installed.');
 
@@ -39,7 +39,7 @@ class Pm2Restart extends Action
         }
 
         $process = new Process(['pm2', 'restart', 'all', '--update-env'], $this->getCwdOption(), timeout: 300);
-        $result = spin(fn() => $process->run(), 'Restarting PM2 processes');
+        $result = spin(fn () => $process->run(), 'Restarting PM2 processes');
         if ($result === 0) {
             $this->components->info('PM2 restarted successfully!');
         } else {

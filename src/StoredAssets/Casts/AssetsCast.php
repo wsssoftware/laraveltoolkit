@@ -19,7 +19,7 @@ class AssetsCast implements CastsAttributes
         return json_validate($value)
             ? new Assets(
                 collect(json_decode($value, true))
-                    ->mapWithKeys(fn(array $asset) => [$asset['k'] => Asset::fromDatabase($model->id, $asset)])
+                    ->mapWithKeys(fn (array $asset) => [$asset['k'] => Asset::fromDatabase($model->id, $asset)])
                     ->all(),
             )
             : $value;

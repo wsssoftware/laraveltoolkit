@@ -51,8 +51,8 @@ class GitPull extends Action
         }
         if ($repository->hasChanges()) {
             if (
-                !app()->isProduction() &&
-                !confirm('There are changes in the repository and it will be lost. Do you want to continue?', false)
+                ! app()->isProduction() &&
+                ! confirm('There are changes in the repository and it will be lost. Do you want to continue?', false)
             ) {
                 $this->components->warn('Skipped.');
 
@@ -60,13 +60,13 @@ class GitPull extends Action
             } else {
                 $this->components->warn('There are changes in the repository, cleaning it...');
             }
-            $outputLines = spin(fn() => $repository->checkout('.'), 'cleaning git repository');
+            $outputLines = spin(fn () => $repository->checkout('.'), 'cleaning git repository');
             foreach ($outputLines as $output) {
                 $this->components->info('GIT: '.$output);
             }
         }
 
-        $outputLines = spin(fn() => $repository->execute('pull', 'origin', $mainBranch), 'pulling git remote changes');
+        $outputLines = spin(fn () => $repository->execute('pull', 'origin', $mainBranch), 'pulling git remote changes');
         foreach ($outputLines as $output) {
             $this->components->info('GIT: '.$output);
         }
@@ -79,13 +79,13 @@ class GitPull extends Action
 
     protected function checkoutRelease(string $release, GitRepository $repository): void
     {
-        spin(fn() => $repository->execute('fetch', '--tags'), 'fetching git tags');
+        spin(fn () => $repository->execute('fetch', '--tags'), 'fetching git tags');
 
         $tags = collect($repository->execute('tag', '--sort=committerdate'))
-            ->mapWithKeys(fn($tag) => [$tag => $tag]);
+            ->mapWithKeys(fn ($tag) => [$tag => $tag]);
         $tag = spin(function () use ($release, $tags) {
             return $tags
-                ->filter(fn($tag) => str_starts_with($tag, $release))
+                ->filter(fn ($tag) => str_starts_with($tag, $release))
                 ->last();
         }, 'Finding the last tag starting with: "'.$release.'"');
 
@@ -94,7 +94,7 @@ class GitPull extends Action
             $tag,
             $release
         );
-        if (!empty($tag) && !confirm($confirmMsg, true)) {
+        if (! empty($tag) && ! confirm($confirmMsg, true)) {
             $tag = null;
         }
         if (empty($tag)) {
@@ -104,7 +104,7 @@ class GitPull extends Action
             throw new \RuntimeException('Tag is empty');
         }
 
-        $outputLines = spin(fn() => $repository->execute('checkout', "tags/$tag"), 'checking out tag');
+        $outputLines = spin(fn () => $repository->execute('checkout', "tags/$tag"), 'checking out tag');
         foreach ($outputLines as $output) {
             $this->components->info('GIT: '.$output);
         }
