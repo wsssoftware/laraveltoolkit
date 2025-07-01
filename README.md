@@ -4,7 +4,7 @@
 [![run-tests](https://github.com/wsssoftware/laraveltoolkit/actions/workflows/run-tests.yml/badge.svg?branch=2.x)](https://github.com/wsssoftware/laraveltoolkit/actions/workflows/run-tests.yml)
 [![Fix PHP code style issues](https://github.com/wsssoftware/laraveltoolkit/actions/workflows/fix-php-code-style-issues.yml/badge.svg)](https://github.com/wsssoftware/laraveltoolkit/actions/workflows/fix-php-code-style-issues.yml)
 [![Total Downloads](https://img.shields.io/packagist/dt/wsssoftware/laraveltoolkit.svg?style=flat-square)](https://packagist.org/packages/wsssoftware/laraveltoolkit)
-[![codecov](https://codecov.io/gh/wsssoftware/laraveltoolkit/graph/badge.svg?token=nzaXcoyc3q)](https://codecov.io/gh/wsssoftware/laraveltoolkit)
+[![codecov](https://codecov.io/gh/wsssoftware/laraveltoolkit/branch/2.x/graph/badge.svg?token=nzaXcoyc3q)](https://codecov.io/gh/wsssoftware/laraveltoolkit)
 
 This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
 
@@ -14,13 +14,6 @@ You can install the package via composer:
 
 ```bash
 composer require wsssoftware/laraveltoolkit
-```
-
-You can publish and run the migrations with:
-
-```bash
-php artisan vendor:publish --tag="laraveltoolkit-migrations"
-php artisan migrate
 ```
 
 You can publish the config file with:
@@ -36,18 +29,7 @@ return [
 ];
 ```
 
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag="laraveltoolkit-views"
-```
-
 ## Usage
-
-```php
-$laraveltoolkit = new Laraveltoolkit();
-echo $laraveltoolkit->echoPhrase('Hello, Wsssoftware!');
-```
 
 ## Testing
 

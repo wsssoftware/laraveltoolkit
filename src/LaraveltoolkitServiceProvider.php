@@ -15,7 +15,8 @@ class LaraveltoolkitServiceProvider extends PackageServiceProvider
          * More info: https://github.com/spatie/laravel-package-tools
          */
         $package
-            ->name('laraveltoolkit');
+            ->name('laraveltoolkit')
+            ->hasConfigFile('laraveltoolkit');
     }
 
     public function boot(): self
