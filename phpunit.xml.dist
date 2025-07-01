@@ -16,7 +16,7 @@
     backupStaticProperties="false"
 >
     <testsuites>
-        <testsuite name="Laravel Toolkit Test Suite">
+        <testsuite name="Wsssoftware Test Suite">
             <directory>tests</directory>
         </testsuite>
     </testsuites>
@@ -27,8 +27,5 @@
         <include>
             <directory suffix=".php">./src</directory>
         </include>
-        <exclude>
-            <directory suffix=".php">./src/Deploy/Commands/Actions</directory>
-        </exclude>
     </source>
 </phpunit>

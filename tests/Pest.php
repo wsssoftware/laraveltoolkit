@@ -1,5 +1,5 @@
 <?php
 
-use LaravelToolkit\Tests\TestCase;
+use Laraveltoolkit\Tests\TestCase;
 
 uses(TestCase::class)->in(__DIR__);

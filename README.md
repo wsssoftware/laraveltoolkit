@@ -1,21 +1,33 @@
-# A Laravel Toolkit with basics tools
+# A modern toolkit of components and utilities for Laravel applications, developed by WSS Software.
 
-[![Packagist Version](https://img.shields.io/packagist/v/wsssoftware/laraveltoolkit)](https://packagist.org/packages/wsssoftware/laraveltoolkit)
-[![NPM Version](https://img.shields.io/npm/v/laraveltoolkit)](https://www.npmjs.com/package/laraveltoolkit)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/wsssoftware/laraveltoolkit.svg?style=flat-square)](https://packagist.org/packages/wsssoftware/laraveltoolkit)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/wsssoftware/laraveltoolkit/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/wsssoftware/laraveltoolkit/actions?query=workflow%3Arun-tests+branch%3Amain)
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/wsssoftware/laraveltoolkit/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/wsssoftware/laraveltoolkit/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
-[![codecov](https://codecov.io/gh/wsssoftware/laraveltoolkit/graph/badge.svg?token=nzaXcoyc3q)](https://codecov.io/gh/wsssoftware/laraveltoolkit)
-[![Packagist Downloads](https://img.shields.io/packagist/dt/wsssoftware/laraveltoolkit?label=Packagist%20downloads)](https://packagist.org/packages/wsssoftware/laraveltoolkit)
-[![NPM Downloads](https://img.shields.io/npm/d18m/laraveltoolkit?label=NPM%20downloads)](https://www.npmjs.com/package/laraveltoolkit)
+[![Total Downloads](https://img.shields.io/packagist/dt/wsssoftware/laraveltoolkit.svg?style=flat-square)](https://packagist.org/packages/wsssoftware/laraveltoolkit)
 
-A helpful and useful tools for Laravel projects integrated with Vue, Inertia, Primevue and others.
+This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
 
-## Installation Laravel
+## Support us
+
+[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/laraveltoolkit.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/laraveltoolkit)
+
+We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
+
+We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+
+## Installation
 
 You can install the package via composer:
 
 ```bash
 composer require wsssoftware/laraveltoolkit
+```
+
+You can publish and run the migrations with:
+
+```bash
+php artisan vendor:publish --tag="laraveltoolkit-migrations"
+php artisan migrate
 ```
 
 You can publish the config file with:
@@ -24,62 +36,25 @@ You can publish the config file with:
 php artisan vendor:publish --tag="laraveltoolkit-config"
 ```
 
-You can publish the sitemap config file with:
+This is the contents of the published config file:
 
-```bash
-php artisan vendor:publish --tag="laraveltoolkit-sitemap"
+```php
+return [
+];
 ```
 
-## Installation JS
+Optionally, you can publish the views using
 
 ```bash
-npm i -D laraveltoolkit
-```
-
-To Laravel Toolkit be able to compile its tailwind you must add this line on tailwind config file
-
-```js
-    content: [
-        // ...
-        './node_modules/laraveltoolkit/resources/**/*.{js,vue,ts}',
-        // ...
-    ]
+php artisan vendor:publish --tag="laraveltoolkit-views"
 ```
 
 ## Usage
 
-### [ACL](docs/ACL.md)
-A minimalist implementation of an access control level
-
-### [Colors](docs/COLORS.md)
-A toolset of helpers for colors.
-
-### [Deploy](docs/DEPLOY.md)
-A simple deploy and maintenance mode.
-
-### [Flash](docs/FLASH.md)
-Simple flash messages from backend to front end.
-
-### [FilePond](docs/FILEPOND.md)
-A bridge between FilePond and Laravel
-
-### [Link](docs/LINK.md)
-Based on Inertia link but with some new feats.
-
-### [PrimeVue Data](docs/PRIMEVUE_DATA.md)
-A minimalist implementation of DataTables and DataView on Laravel
-
-### [SEO](docs/SEO.md)
-Tools to help dev to handle with SEO features.
-
-### [SiteMap](docs/SITEMAP.md)
-A toolkit to automatically generate sitemaps for application 
-
-### [Stored Assets](docs/STORED_ASSETS.md)
-Tools to help handle with storing assets. 
-
-### [Theme Switcher](docs/THEME.md)
-A JS class that handles theme changes
+```php
+$laraveltoolkit = new Laraveltoolkit();
+echo $laraveltoolkit->echoPhrase('Hello, Wsssoftware!');
+```
 
 ## Testing
 
