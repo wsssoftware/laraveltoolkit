@@ -61,10 +61,6 @@ Simple flash messages from backend to front end.
 
 A bridge between FilePond and Laravel
 
-### [Link](docs/LINK.md)
-
-Based on Inertia link but with some new feats.
-
 ### [PrimeVue Data](docs/PRIMEVUE_DATA.md)
 
 A minimalist implementation of DataTables and DataView on Laravel
@@ -81,9 +77,11 @@ A toolkit to automatically generate sitemaps for application
 
 Tools to help handle with storing assets.
 
-### [Theme Switcher](docs/THEME.md)
+## Multi domain application
 
-A JS class that handles theme changes
+If you are using a multi-domain application with InertiaJs, you can use [this guide](docs/MULTI_DOMAIN.md) to configure
+your cors policies
+and add a middleware to replace redirects for Inertia::location() when needed.
 
 ## Testing
 
