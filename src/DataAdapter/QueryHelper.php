@@ -39,7 +39,7 @@ readonly class QueryHelper
             $filter->applyGlobal($builder, $this->globalFilterColumns);
             $filters = $filters->where('global', false);
         }
-        $builder->whereNested(fn (QueryBuilder $q) => $filters->each(fn (Filter $f) => $f->apply($q)));
+        $builder->whereNested(fn(QueryBuilder $q) => $filters->each(fn(Filter $f) => $f->apply($q)));
     }
 
     public function sort(EloquentBuilder $builder): void
@@ -49,8 +49,8 @@ readonly class QueryHelper
         }
         $builder->reorder();
         collect(explode(',', $sort))
-            ->map(fn (string $item) => explode(':', $item))
-            ->mapWithKeys(fn (array $item) => [$item[0] => $item[1]])
+            ->map(fn(string $item) => explode(':', $item))
+            ->mapWithKeys(fn(array $item) => [$item[0] => $item[1]])
             ->each(function (string $dir, string $column) use ($builder) {
                 $builder->orderBy($column, $dir);
             });

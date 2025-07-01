@@ -75,7 +75,7 @@ it('can\'t move', function () {
         ->toBeInstanceOf(UploadedFile::class)
         ->and($file->isValid())
         ->toBeTrue()
-        ->and(fn () => $file->move($disk->path('foo-bar/test')))
+        ->and(fn() => $file->move($disk->path('foo-bar/test')))
         ->toThrow(FileException::class);
 });
 
@@ -92,37 +92,37 @@ it('can\'t move with other errors', function () {
         ->toBeTrue()
         ->and($file->move($disk->path('tmp')))
         ->toBeInstanceOf(File::class)
-        ->and(fn () => $file->move($disk->path('tmp')))
+        ->and(fn() => $file->move($disk->path('tmp')))
         ->toThrow(FileException::class);
 
     $reflection = new ReflectionClass(Symfony\Component\HttpFoundation\File\UploadedFile::class);
     $property = $reflection->getProperty('error');
 
     $property->setValue($file, UPLOAD_ERR_INI_SIZE);
-    expect(fn () => $file->move($disk->path('tmp')))
+    expect(fn() => $file->move($disk->path('tmp')))
         ->toThrow(IniSizeFileException::class);
 
     $property->setValue($file, UPLOAD_ERR_FORM_SIZE);
-    expect(fn () => $file->move($disk->path('tmp')))
+    expect(fn() => $file->move($disk->path('tmp')))
         ->toThrow(FormSizeFileException::class);
 
     $property->setValue($file, UPLOAD_ERR_PARTIAL);
-    expect(fn () => $file->move($disk->path('tmp')))
+    expect(fn() => $file->move($disk->path('tmp')))
         ->toThrow(PartialFileException::class);
 
     $property->setValue($file, UPLOAD_ERR_NO_FILE);
-    expect(fn () => $file->move($disk->path('tmp')))
+    expect(fn() => $file->move($disk->path('tmp')))
         ->toThrow(NoFileException::class);
 
     $property->setValue($file, UPLOAD_ERR_CANT_WRITE);
-    expect(fn () => $file->move($disk->path('tmp')))
+    expect(fn() => $file->move($disk->path('tmp')))
         ->toThrow(CannotWriteFileException::class);
 
     $property->setValue($file, UPLOAD_ERR_NO_TMP_DIR);
-    expect(fn () => $file->move($disk->path('tmp')))
+    expect(fn() => $file->move($disk->path('tmp')))
         ->toThrow(NoTmpDirFileException::class);
 
     $property->setValue($file, UPLOAD_ERR_EXTENSION);
-    expect(fn () => $file->move($disk->path('tmp')))
+    expect(fn() => $file->move($disk->path('tmp')))
         ->toThrow(ExtensionFileException::class);
 });

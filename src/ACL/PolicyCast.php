@@ -23,7 +23,7 @@ class PolicyCast implements CastsAttributes
         }
         $values = $value ?? [];
         $policy = $this->getPolicy($key, $model);
-        $policy->rules->each(fn (Rule $rule) => $rule->setValue(Arr::get($values, $rule->key, false)));
+        $policy->rules->each(fn(Rule $rule) => $rule->setValue(Arr::get($values, $rule->key, false)));
 
         return $policy;
 
@@ -44,14 +44,14 @@ class PolicyCast implements CastsAttributes
             }
         } elseif (is_array($value)) {
             foreach ($value as $ruleKey => $permission) {
-                throw_if(! is_string($ruleKey), Exception::class, 'Key must be a string.');
-                throw_if(! is_bool($permission), Exception::class, 'Value must be a boolean.');
+                throw_if(!is_string($ruleKey), Exception::class, 'Key must be a string.');
+                throw_if(!is_bool($permission), Exception::class, 'Value must be a boolean.');
                 $policy->{$ruleKey}->value = $permission;
             }
         }
 
         return $policy->rules
-            ->mapWithKeys(fn (Rule $rule) => [$rule->key => $rule->value ?? false])
+            ->mapWithKeys(fn(Rule $rule) => [$rule->key => $rule->value ?? false])
             ->toJson();
     }
 

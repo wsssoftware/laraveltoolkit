@@ -30,18 +30,18 @@ class TrashBinCleaner implements ShouldBeUnique, ShouldQueue
         $disk = $this->disk($this->disk);
         /** @var \Illuminate\Support\Collection $directories */
         $directories = collect($disk->directories(StoredAssets::trashBinPath()))
-            ->map(fn (string $path) => str($path)->trim('/')->afterLast('/')->toString())
-            ->map(fn (string $folder) => [
+            ->map(fn(string $path) => str($path)->trim('/')->afterLast('/')->toString())
+            ->map(fn(string $folder) => [
                 'deadline' => str($folder)->before('-')->toInteger(),
                 'uuid' => str($folder)->after('-')->toString(),
             ])
-            ->filter(fn (array $data) => Str::isUuid($data['uuid']) && is_numeric($data['deadline']));
+            ->filter(fn(array $data) => Str::isUuid($data['uuid']) && is_numeric($data['deadline']));
 
         $now = now()->getTimestamp();
-        $readyToDelete = $directories->filter(fn (array $data) => intval($data['deadline'] <= $now))
-            ->map(fn (array $data) => $data['uuid']);
+        $readyToDelete = $directories->filter(fn(array $data) => intval($data['deadline'] <= $now))
+            ->map(fn(array $data) => $data['uuid']);
 
-        $readyToDelete->each(fn (string $uuid) => StoredAssets::deleteFromTrashBin($this->disk, $uuid));
+        $readyToDelete->each(fn(string $uuid) => StoredAssets::deleteFromTrashBin($this->disk, $uuid));
 
         $directoriesCount = $directories->count();
         $readyToDeleteCount = $readyToDelete->count();

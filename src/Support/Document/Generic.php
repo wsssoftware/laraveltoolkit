@@ -11,7 +11,7 @@ class Generic implements Document
     public function checkDigits(string $document): string
     {
         $strlen = strlen(Regex::onlyNumeric($document));
-        throw_if(! in_array($strlen, [9, 11, 12, 14]), Exception::class, 'Invalid document');
+        throw_if(!in_array($strlen, [9, 11, 12, 14]), Exception::class, 'Invalid document');
 
         return match ($strlen) {
             9, 11 => app(CPF::class)->checkDigits($document),
@@ -22,8 +22,8 @@ class Generic implements Document
     public function fake(): string
     {
         return Lottery::odds(0.5)
-            ->winner(fn () => app(CPF::class)->fake())
-            ->loser(fn () => app(CNPJ::class)->fake())
+            ->winner(fn() => app(CPF::class)->fake())
+            ->loser(fn() => app(CNPJ::class)->fake())
             ->choose();
     }
 
@@ -35,7 +35,7 @@ class Generic implements Document
     public function mask(string $document): string
     {
         $strlen = strlen(Regex::onlyNumeric($document));
-        throw_if(! in_array($strlen, [11, 14]), Exception::class, 'Invalid document');
+        throw_if(!in_array($strlen, [11, 14]), Exception::class, 'Invalid document');
 
         return match ($strlen) {
             11 => app(CPF::class)->mask($document),

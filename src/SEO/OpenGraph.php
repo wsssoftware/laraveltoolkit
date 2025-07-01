@@ -27,7 +27,7 @@ class OpenGraph
         $this->url = config('laraveltoolkit.seo.defaults.open_graph.url', $canonical);
         $imageConfig = config('laraveltoolkit.seo.defaults.open_graph.image',
             ['disk' => null, 'path' => null, 'alt' => null]);
-        if (! empty($imageConfig['disk']) && ! empty($imageConfig['path'])) {
+        if (!empty($imageConfig['disk']) && !empty($imageConfig['path'])) {
             $this->image = new Image(
                 Arr::get($imageConfig, 'disk'),
                 Arr::get($imageConfig, 'path'),

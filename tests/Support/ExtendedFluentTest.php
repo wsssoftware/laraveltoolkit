@@ -8,12 +8,11 @@ use Laraveltoolkit\Tests\Support\FooBarExtendedFluent;
 use Laraveltoolkit\Tests\Support\TestEnum;
 
 it('test extended fluent', function () {
-    $fluent = new class extends ExtendedFluent
-    {
+    $fluent = new class extends ExtendedFluent {
         protected function fullName(): \Illuminate\Database\Eloquent\Casts\Attribute
         {
             return \Illuminate\Database\Eloquent\Casts\Attribute::make(
-                get: fn ($value) => $this->name.' '.$this->last_name,
+                get: fn($value) => $this->name.' '.$this->last_name,
                 set: function ($value) {
                     $this->name = explode(' ', $value)[0];
                     $this->last_name = explode(' ', $value)[1];
@@ -24,7 +23,7 @@ it('test extended fluent', function () {
         protected function enumValue(): \Illuminate\Database\Eloquent\Casts\Attribute
         {
             return \Illuminate\Database\Eloquent\Casts\Attribute::make(
-                get: fn ($value) => TestEnum::from($value),
+                get: fn($value) => TestEnum::from($value),
             );
         }
     };
@@ -82,9 +81,9 @@ it('test extended casts', function () {
 
     expect(AsExtendedFluent::of(FooBarExtendedFluent::class))
         ->toEqual(AsExtendedFluent::class.':'.FooBarExtendedFluent::class)
-        ->and(fn () => AsExtendedFluent::castUsing(['invalid_class']))
+        ->and(fn() => AsExtendedFluent::castUsing(['invalid_class']))
         ->toThrow('Class invalid_class does not exist.')
-        ->and(fn () => AsExtendedFluent::castUsing([AsExtendedFluent::class]))
+        ->and(fn() => AsExtendedFluent::castUsing([AsExtendedFluent::class]))
         ->toThrow('Class Laraveltoolkit\Support\AsExtendedFluent does not extend ExtendedFluent.')
         ->and($cast)
         ->toBeInstanceOf(CastsAttributes::class)

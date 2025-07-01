@@ -17,7 +17,7 @@ trait HasStoredAssets
         self::initStoredAssetFieldsAndRelations();
         self::saving(function (Model $model) {
             foreach ($model->getDirty() as $field => $item) {
-                if (! $item instanceof Recipe) {
+                if (!$item instanceof Recipe) {
                     continue;
                 } elseif (Str::isUuid($uuid = $item->save())) {
                     $model->setAttribute($field, $uuid);
@@ -35,13 +35,13 @@ trait HasStoredAssets
         $model = static::newModelInstance();
         foreach ($model->getCasts() as $field => $cast) {
             $validClass = class_exists($cast) && is_subclass_of($cast, Recipe::class);
-            if ($validClass && ! $model->isRelation($field)) {
+            if ($validClass && !$model->isRelation($field)) {
                 $uuidField = "{$field}_uuid";
                 static::$storedAssetFields[$field] = $field;
                 static::$storedAssetUuidMap[$uuidField] = $field;
                 static::resolveRelationUsing(
                     $field,
-                    fn (Model $model) => $model->morphOne(StoredAssetModel::class, 'asset', 'model', 'id', $uuidField)
+                    fn(Model $model) => $model->morphOne(StoredAssetModel::class, 'asset', 'model', 'id', $uuidField)
                 );
             }
         }

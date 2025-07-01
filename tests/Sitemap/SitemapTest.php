@@ -40,7 +40,7 @@ it('can from query', function () {
 
     expect($closureRepositories)
         ->toHaveCount(0)
-        ->and(Sitemap::fromQuery(User::query(), fn () => Sitemap::addUrl('foo.com')))
+        ->and(Sitemap::fromQuery(User::query(), fn() => Sitemap::addUrl('foo.com')))
         ->toBeInstanceOf(\Laraveltoolkit\Sitemap\Sitemap::class)
         ->and($closureRepositories)
         ->toHaveCount(1);
@@ -54,7 +54,7 @@ it('can from collection', function () {
 
     expect($closureRepositories)
         ->toHaveCount(0)
-        ->and(Sitemap::fromCollection(collect([1, 2, 3]), fn () => Sitemap::addUrl('foo.com')))
+        ->and(Sitemap::fromCollection(collect([1, 2, 3]), fn() => Sitemap::addUrl('foo.com')))
         ->toBeInstanceOf(\Laraveltoolkit\Sitemap\Sitemap::class)
         ->and($closureRepositories)
         ->toHaveCount(1);
@@ -65,17 +65,17 @@ it('test that combine index and url in same sitemap will fail', function () {
         ->getProperty('items');
     expect(Sitemap::addIndex('foo'))
         ->toBeInstanceOf(\Laraveltoolkit\Sitemap\Sitemap::class)
-        ->and(fn () => Sitemap::addUrl('foo.com'))
+        ->and(fn() => Sitemap::addUrl('foo.com'))
         ->toThrow('You cannot combine indexes and url in same sitemap.')
-        ->and(fn () => Sitemap::fromCollection(collect(), fn () => Sitemap::addUrl('foo.com')))
+        ->and(fn() => Sitemap::fromCollection(collect(), fn() => Sitemap::addUrl('foo.com')))
         ->toThrow('You cannot combine indexes and url in same sitemap.')
-        ->and(fn () => Sitemap::fromQuery(User::query(), fn () => Sitemap::addUrl('foo.com')))
+        ->and(fn() => Sitemap::fromQuery(User::query(), fn() => Sitemap::addUrl('foo.com')))
         ->toThrow('You cannot combine indexes and url in same sitemap.');
 
     $property->setValue(Sitemap::getFacadeRoot(), collect());
     expect(Sitemap::addUrl('https://google.com.br'))
         ->toBeInstanceOf(\Laraveltoolkit\Sitemap\Sitemap::class)
-        ->and(fn () => Sitemap::addIndex('foo'))
+        ->and(fn() => Sitemap::addIndex('foo'))
         ->toThrow('You cannot combine indexes and url in same sitemap.');
 
 });
@@ -88,11 +88,11 @@ it('can registry domain items', function () {
 
     expect($domains)
         ->toHaveCount(0)
-        ->and(Sitemap::domain('foo.bar.test', fn () => Sitemap::addIndex('abc')))
+        ->and(Sitemap::domain('foo.bar.test', fn() => Sitemap::addIndex('abc')))
         ->toBeNull()
         ->and($domains)
         ->toHaveCount(1)
-        ->and(fn () => Sitemap::domain('foo.bar.test', fn () => Sitemap::addIndex('abc')))
+        ->and(fn() => Sitemap::domain('foo.bar.test', fn() => Sitemap::addIndex('abc')))
         ->toThrow("Domain 'foo.bar.test' already declared.")
         ->and(Sitemap::domainExists('foo.bar.test'))
         ->toBeTrue()
@@ -105,7 +105,7 @@ it('can\'t add domain inside domain', function () {
         ->getProperty('locked')
         ->setValue(Sitemap::getFacadeRoot(), true);
 
-    expect(fn () => Sitemap::domain('foo.bar.test', fn () => Sitemap::addIndex('abc')))
+    expect(fn() => Sitemap::domain('foo.bar.test', fn() => Sitemap::addIndex('abc')))
         ->toThrow('You cannot put a domain inside another domain.');
 });
 
@@ -117,11 +117,11 @@ it('can registry index items', function () {
 
     expect($indexes)
         ->toHaveCount(0)
-        ->and(Sitemap::index('foo', fn () => Sitemap::addIndex('abc')))
+        ->and(Sitemap::index('foo', fn() => Sitemap::addIndex('abc')))
         ->toBeNull()
         ->and($indexes)
         ->toHaveCount(1)
-        ->and(fn () => Sitemap::index('foo', fn () => Sitemap::addIndex('abc')))
+        ->and(fn() => Sitemap::index('foo', fn() => Sitemap::addIndex('abc')))
         ->toThrow("Group 'foo' already declared.")
         ->and(Sitemap::indexExists('foo'))
         ->toBeTrue()
@@ -136,7 +136,7 @@ it('can\'t add group inside group', function () {
         ->getProperty('locked')
         ->setValue(Sitemap::getFacadeRoot(), true);
 
-    expect(fn () => Sitemap::index('foo', fn () => Sitemap::addIndex('abc')))
+    expect(fn() => Sitemap::index('foo', fn() => Sitemap::addIndex('abc')))
         ->toThrow('Groups must be placed on root of sitemap.php');
 });
 

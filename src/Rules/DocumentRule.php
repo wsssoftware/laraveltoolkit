@@ -36,7 +36,7 @@ readonly class DocumentRule implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (! is_string($value)) {
+        if (!is_string($value)) {
             $fail('validation.string')->translate();
 
             return;
@@ -46,22 +46,22 @@ readonly class DocumentRule implements ValidationRule
 
         if ($this->type === Document::GENERIC) {
             match (true) {
-                ! in_array($length, [11, 14]) => $fail('laraveltoolkit::validation.document.generic.size')->translate(),
-                ! $this->type->validate($value) => $fail('laraveltoolkit::validation.document.generic.invalid')->translate(),
+                !in_array($length, [11, 14]) => $fail('laraveltoolkit::validation.document.generic.size')->translate(),
+                !$this->type->validate($value) => $fail('laraveltoolkit::validation.document.generic.invalid')->translate(),
                 default => true,
             };
         }
         if ($this->type === Document::CNPJ) {
             match (true) {
                 $length !== 14 => $fail('laraveltoolkit::validation.document.cnpj.size')->translate(),
-                ! $this->type->validate($value) => $fail('laraveltoolkit::validation.document.cnpj.invalid')->translate(),
+                !$this->type->validate($value) => $fail('laraveltoolkit::validation.document.cnpj.invalid')->translate(),
                 default => true,
             };
         }
         if ($this->type === Document::CPF) {
             match (true) {
                 $length !== 11 => $fail('laraveltoolkit::validation.document.cpf.size')->translate(),
-                ! $this->type->validate($value) => $fail('laraveltoolkit::validation.document.cpf.invalid')->translate(),
+                !$this->type->validate($value) => $fail('laraveltoolkit::validation.document.cpf.invalid')->translate(),
                 default => true,
             };
         }

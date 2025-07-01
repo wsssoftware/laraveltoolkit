@@ -12,8 +12,8 @@ enum FilenameStoreType: string
     public function getFilename(AssetIntent $intent, ?string $extension = null): string
     {
         return match ($this) {
-            self::KEY => str($intent->getKey())->camel()->kebab()->toString(),
-            self::UUID => Str::uuid()->toString(),
-        }.(! empty($extension) ? '.'.$extension : '');
+                self::KEY => str($intent->getKey())->camel()->kebab()->toString(),
+                self::UUID => Str::uuid()->toString(),
+            }.(!empty($extension) ? '.'.$extension : '');
     }
 }

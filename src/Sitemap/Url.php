@@ -13,7 +13,8 @@ readonly class Url implements ToXml
         public ?Carbon $lastModified = null,
         public ?ChangeFrequency $changeFrequency = null,
         public ?float $priority = null,
-    ) {}
+    ) {
+    }
 
     public function toXml(DOMDocument $xml, DOMElement $root): void
     {
@@ -25,8 +26,8 @@ readonly class Url implements ToXml
             'changefreq' => $this->changeFrequency?->value,
             'priority' => $this->priority,
         ])
-            ->filter(fn ($item) => $item !== null)
-            ->each(fn ($value, $key) => $currentTrack->appendChild($xml->createElement($key, $value)));
+            ->filter(fn($item) => $item !== null)
+            ->each(fn($value, $key) => $currentTrack->appendChild($xml->createElement($key, $value)));
 
     }
 }

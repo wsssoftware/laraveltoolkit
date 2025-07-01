@@ -10,6 +10,6 @@ trait HasIntents
     public function intents(int $step): Collection
     {
         return collect(config("laraveltoolkit.deploy.step$step", []))
-            ->map(fn (array $item) => new Intent($item[0], $item[1]));
+            ->map(fn(array $item) => new Intent($item[0], $item[1]));
     }
 }

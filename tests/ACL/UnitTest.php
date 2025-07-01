@@ -15,7 +15,7 @@ it('PolicyMaker works properly', function () {
         ->toBe('Users')
         ->and($pm->description)
         ->toBe('Manage users')
-        ->and(fn () => $pm->rule('column', 'column', 'column'))
+        ->and(fn() => $pm->rule('column', 'column', 'column'))
         ->toThrow('column is a reserved name and cannot used on key.')
         ->and($policy = $pm->crud()->rule('ab', 'ab', 'ab')->toPolicy())
         ->toBeInstanceOf(Policy::class)
@@ -31,9 +31,9 @@ it('PolicyMaker works properly', function () {
         ->toBe('Manage users')
         ->and($policy->create)
         ->toBeInstanceOf(Rule::class)
-        ->and(fn () => $policy->foo)
+        ->and(fn() => $policy->foo)
         ->toThrow('Property foo does not exist.')
-        ->and(fn () => $policy->create->foo)
+        ->and(fn() => $policy->create->foo)
         ->toThrow('Property foo does not exist.');
 });
 

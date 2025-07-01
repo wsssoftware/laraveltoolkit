@@ -99,7 +99,7 @@ Available adapter props:
 
 <template>
     <DataTableAdapter prop-name="users" v-slot="props" :rows="15" :filters="filters">
-        <Button label="Clear" @click="props.clearFilters"/>
+        <Button label="Clear" @click="props.clearFilters" />
         <input v-model="filters.global.constraints[0].value" @keyup="props.manualFilter(filters)">
         <DataTable
             :first="props.first"
@@ -122,27 +122,27 @@ Available adapter props:
             <Column field="id" :sortable="true" header="Id">
                 <template #filter="{filterModel, filterCallback}">
                     <input v-model="filterModel.value" type="text" @input="filterCallback()" class="p-column-filter"
-                           placeholder="Search by country"/>
+                           placeholder="Search by country" />
                 </template>
             </Column>
             <Column field="name" :sortable="true" header="Nome">
                 <template #filter="{filterModel, filterCallback}">
                     <input v-model="filterModel.value" type="text" @input="filterCallback()" class="p-column-filter"
-                           placeholder="Search by country"/>
+                           placeholder="Search by country" />
                 </template>
             </Column>
-            <Column field="email" :sortable="true" header="Email"/>
+            <Column field="email" :sortable="true" header="Email" />
         </DataTable>
     </DataTableAdapter>
 </template>
 
 <script lang="ts">
-    import {defineComponent} from "vue";
-    import {DataTableAdapter} from "laraveltoolkit";
+    import { defineComponent } from "vue";
+    import { DataTableAdapter } from "laraveltoolkit";
     import DataTable from "primevue/datatable";
     import Column from "primevue/column";
     import Button from "primevue/button";
-    import {FilterMatchMode, FilterOperator} from '@primevue/core/api';
+    import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
 
     export default defineComponent({
         name: "TableAdapter",
@@ -155,11 +155,14 @@ Available adapter props:
         data() {
             return {
                 filters: {
-                    global: {operator: FilterOperator.AND, constraints: [{value: '', matchMode: 'contains'}]},
-                    id: {operator: FilterOperator.AND, constraints: [{value: '', matchMode: FilterMatchMode.CONTAINS}]},
+                    global: { operator: FilterOperator.AND, constraints: [{ value: '', matchMode: 'contains' }] },
+                    id: {
+                        operator: FilterOperator.AND,
+                        constraints: [{ value: '', matchMode: FilterMatchMode.CONTAINS }]
+                    },
                     name: {
                         operator: FilterOperator.AND,
-                        constraints: [{value: '', matchMode: FilterMatchMode.CONTAINS}]
+                        constraints: [{ value: '', matchMode: FilterMatchMode.CONTAINS }]
                     },
                 },
             }
@@ -202,7 +205,7 @@ Available adapter props:
 
 <template>
     <DataViewAdapter prop-name="users" v-slot="props" :rows="5" :filters="filters">
-        <Button label="Clear" @click="props.clearFilters"/>
+        <Button label="Clear" @click="props.clearFilters" />
         <input v-model="filters.global.value">
         <DataView
             data-key="id"
@@ -243,8 +246,8 @@ Available adapter props:
 </template>
 
 <script lang="ts">
-    import {defineComponent} from "vue";
-    import {DataViewAdapter} from "laraveltoolkit";
+    import { defineComponent } from "vue";
+    import { DataViewAdapter } from "laraveltoolkit";
     import DataView from "primevue/dataview";
     import Button from "primevue/button";
 
@@ -258,9 +261,9 @@ Available adapter props:
         data() {
             return {
                 filters: {
-                    global: {value: '', matchMode: 'contains'},
-                    id: {value: '', matchMode: 'contains'},
-                    name: {value: '', matchMode: 'contains'}
+                    global: { value: '', matchMode: 'contains' },
+                    id: { value: '', matchMode: 'contains' },
+                    name: { value: '', matchMode: 'contains' }
                 },
             }
         },

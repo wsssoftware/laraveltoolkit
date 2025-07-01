@@ -19,13 +19,13 @@ readonly class ClosureRepository
     public function resolve(): void
     {
         if ($this->repository instanceof Collection) {
-            $this->repository->each(fn (mixed $item) => $this->closure->call($this, $item));
+            $this->repository->each(fn(mixed $item) => $this->closure->call($this, $item));
         } else {
             if (is_int($this->repository->getQuery()->limit)) {
-                $this->repository->get()->each(fn (mixed $item) => $this->closure->call($this, $item));
+                $this->repository->get()->each(fn(mixed $item) => $this->closure->call($this, $item));
             } else {
                 $this->repository->each(
-                    fn (mixed $item) => $this->closure->call($this, $item),
+                    fn(mixed $item) => $this->closure->call($this, $item),
                     $this->count ?? 1_000,
                 );
             }

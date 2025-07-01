@@ -14,7 +14,7 @@ class MaintenanceController
      */
     public function __invoke(Request $request): Response|Responsable
     {
-        if (! app()->isDownForMaintenance()) {
+        if (!app()->isDownForMaintenance()) {
             return redirect(request()->query('redirect') ?? config('laraveltoolkit.deploy.default_redirect'));
         }
 

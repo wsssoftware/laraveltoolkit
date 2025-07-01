@@ -31,7 +31,7 @@ it('log on large files', function () {
     Log::shouldReceive('warning')
         ->andThrow(Exception::class, 'large files');
 
-    expect(fn () => $rs(request()))
+    expect(fn() => $rs(request()))
         ->toThrow('large files');
 });
 
@@ -48,6 +48,6 @@ it('log on large items count', function () {
     Log::shouldReceive('warning')
         ->andThrow(Exception::class, 'large count');
 
-    expect(fn () => $rs(request()))
+    expect(fn() => $rs(request()))
         ->toThrow('large count');
 });

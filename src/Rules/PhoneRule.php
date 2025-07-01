@@ -72,7 +72,7 @@ readonly class PhoneRule implements ValidationRule
     {
         if ($this->types->count() === 1) {
             $type = $this->types->first();
-            if (! $type->validate($value)) {
+            if (!$type->validate($value)) {
                 $fail("laraveltoolkit::validation.phone.$type->value.invalid")->translate();
             }
 
@@ -82,7 +82,7 @@ readonly class PhoneRule implements ValidationRule
         foreach ($this->types as $type) {
             $results->put($type->value, $type->validate($value));
         }
-        if ($results->filter(fn (bool $r) => $r === true)->count() === 0) {
+        if ($results->filter(fn(bool $r) => $r === true)->count() === 0) {
             $labels = [];
             foreach ($this->types as $type) {
                 $labels[] = __("laraveltoolkit::validation.phone.$type->value.label");

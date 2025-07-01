@@ -45,7 +45,7 @@ class NpmUpdateAndBuild extends Action
     protected function npmUpdate(): void
     {
         $process = new Process(['npm', 'install'], $this->getCwdOption(), timeout: 300);
-        $result = spin(fn () => $process->run(), 'Updating npm packages...');
+        $result = spin(fn() => $process->run(), 'Updating npm packages...');
         if ($result === 0) {
             $this->components->info('NPM installed successfully!');
         } else {
@@ -59,7 +59,7 @@ class NpmUpdateAndBuild extends Action
         $this->components->info(sprintf('Building resources on "%s"', $cwd));
 
         $process = new Process(['npm', 'run', 'build'], $cwd, timeout: 300);
-        $result = spin(fn () => $process->run(), 'Building Frontend using vite...');
+        $result = spin(fn() => $process->run(), 'Building Frontend using vite...');
         $process->start();
         if ($result === 0) {
             $this->components->info('Frontend built successfully!');

@@ -11,7 +11,7 @@ class Revert
     public function __invoke(Request $request): Response
     {
         $path = Filepond::path($request->getContent());
-        defer(fn () => $this->delete($path));
+        defer(fn() => $this->delete($path));
 
         return response()->noContent();
     }

@@ -23,7 +23,7 @@ enum MatchMode: string
     public function applyGlobal(EloquentBuilder $builder, ?array $columns, mixed $value): void
     {
         $columns ??= collect(Schema::getColumns($builder->getModel()->getTable()))
-            ->map(fn (array $column) => $column['name'])
+            ->map(fn(array $column) => $column['name'])
             ->toArray();
         $builder->whereNested(function (QueryBuilder $query) use ($columns, $value) {
             foreach ($columns as $column) {

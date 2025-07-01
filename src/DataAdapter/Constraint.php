@@ -18,6 +18,6 @@ readonly class Constraint
         $matchMode = MatchMode::tryFrom(Arr::get($constraint, 'matchMode'));
         $value = Arr::get($constraint, 'value');
 
-        return $matchMode !== null && (is_bool($value) || ! empty($value)) ? new self($matchMode, $value) : null;
+        return $matchMode !== null && (is_bool($value) || !empty($value)) ? new self($matchMode, $value) : null;
     }
 }

@@ -174,7 +174,7 @@ it('can move to and restore from trash bin', function () {
 });
 
 it('test move folder and fail on copy', function () {
-    Storage::extend('local', fn ($app, $config) => (new MoveDirectoryFilesystemTest)->failOnCopy());
+    Storage::extend('local', fn($app, $config) => (new MoveDirectoryFilesystemTest)->failOnCopy());
     $disk = Storage::disk('local');
 
     $storedAsset = new Laraveltoolkit\StoredAssets\StoredAssets;
@@ -187,7 +187,7 @@ it('test move folder and fail on copy', function () {
 });
 
 it('test move folder and fail on delete', function () {
-    Storage::extend('local', fn ($app, $config) => (new MoveDirectoryFilesystemTest)->failOnDeleteDirectory());
+    Storage::extend('local', fn($app, $config) => (new MoveDirectoryFilesystemTest)->failOnDeleteDirectory());
     $disk = Storage::disk('local');
 
     $storedAsset = new Laraveltoolkit\StoredAssets\StoredAssets;

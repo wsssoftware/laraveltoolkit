@@ -12,7 +12,8 @@ readonly class Intent
     public function __construct(
         public string $commandFqn,
         public array $arguments = [],
-    ) {}
+    ) {
+    }
 
     public static function make(string $commandFqn, array $arguments = []): array
     {

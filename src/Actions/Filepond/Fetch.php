@@ -45,7 +45,7 @@ class Fetch
     protected function filename(string $url, File $file): string
     {
         $pathParts = pathinfo($url);
-        $filename = ! empty($pathParts['filename']) ? $pathParts['filename'] : 'download';
+        $filename = !empty($pathParts['filename']) ? $pathParts['filename'] : 'download';
 
         return "$filename.{$file->guessExtension()}";
     }

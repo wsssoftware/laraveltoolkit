@@ -23,7 +23,7 @@ class UploadedFile extends \Illuminate\Http\UploadedFile
         if (empty($id)) {
             return null;
         }
-        if (! str($id)->isUuid()) {
+        if (!str($id)->isUuid()) {
             Log::warning('Tried to get an uploaded file with a non-uuid identifier.');
 
             return null;
@@ -77,7 +77,7 @@ class UploadedFile extends \Illuminate\Http\UploadedFile
             } finally {
                 restore_error_handler();
             }
-            if (! $moved) {
+            if (!$moved) {
                 throw new FileException(sprintf('Could not move the file "%s" to "%s" (%s).', $this->getPathname(),
                     $target, strip_tags($error)));
             }

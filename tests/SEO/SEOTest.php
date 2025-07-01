@@ -74,7 +74,7 @@ it('test valid robots', function () {
 });
 
 it('test invalid robots', function () {
-    expect(fn () => SEO::withRobots('foo_bar'))
+    expect(fn() => SEO::withRobots('foo_bar'))
         ->toThrow(ValueError::class);
 });
 

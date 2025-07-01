@@ -28,7 +28,7 @@ class MigrateDatabase extends Action
         }
 
         $this->spin(
-            fn () => $this->callSilent('migrate', ['--force' => true]),
+            fn() => $this->callSilent('migrate', ['--force' => true]),
             'Migrating database...',
             'Database migrated successfully!',
             'Database migration failed!'

@@ -18,7 +18,8 @@ readonly class Asset implements Arrayable
         public string $extension,
         public string $mimeType,
         public int $size,
-    ) {}
+    ) {
+    }
 
     public function disk(): Filesystem|FilesystemAdapter
     {

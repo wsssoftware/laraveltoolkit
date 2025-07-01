@@ -20,7 +20,7 @@ abstract class Action extends Command
     protected function getCwdOption(): string
     {
         $cwd = $this->option('cwd') ?? app()->basePath();
-        if (! is_dir($cwd)) {
+        if (!is_dir($cwd)) {
             throw new RuntimeException("The directory $cwd does not exist");
         }
 

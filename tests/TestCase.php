@@ -18,11 +18,11 @@ class TestCase extends Orchestra
         $this->app->maintenanceMode()->deactivate();
 
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'Laraveltoolkit\\Database\\Factories\\'.class_basename($modelName).'Factory'
+            fn(string $modelName) => 'Laraveltoolkit\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
         $copyPath = dirname(__DIR__).'/routes/sitemap.php';
         $sitemapRoutesPath = base_path('routes/sitemap.php');
-        if (! file_exists($sitemapRoutesPath)) {
+        if (!file_exists($sitemapRoutesPath)) {
             copy($copyPath, $sitemapRoutesPath);
         }
         new User(['id' => 1, 'name' => 'Foo Bar', 'email' => 'foo@bar.com', 'password' => 'abc'])->saveOrFail();

@@ -45,7 +45,7 @@ class CollectionMacro
         Collection::macro(
             'toValueLabelFromArray',
             function (string $labelKey = 'label', string $valueKey = 'value'): Collection {
-                return $this->map(fn (mixed $item, mixed $key) => [
+                return $this->map(fn(mixed $item, mixed $key) => [
                     $valueKey => $key,
                     $labelKey => $item,
                 ])->values();
@@ -60,10 +60,10 @@ class CollectionMacro
                 string $valueKey = 'value',
                 array $keysToPreserve = [],
             ): Collection {
-                return $this->map(fn (object $item) => [
+                return $this->map(fn(object $item) => [
                     ...collect($keysToPreserve)
-                        ->mapWithKeys(fn (string $key, mixed $index) => [
-                            is_string($index) && ! is_numeric($index) ? $index : $key => $item->{$key},
+                        ->mapWithKeys(fn(string $key, mixed $index) => [
+                            is_string($index) && !is_numeric($index) ? $index : $key => $item->{$key},
                         ])
                         ->toArray(),
                     $valueKey => $item->{$value},
