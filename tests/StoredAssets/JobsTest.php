@@ -3,6 +3,7 @@
 use Illuminate\Http\UploadedFile;
 use Laraveltoolkit\Facades\StoredAssets;
 use Laraveltoolkit\StoredAssets\Jobs\GarbageCollectorManager;
+use Laraveltoolkit\StoredAssets\Jobs\TrashBinCleaner;
 use Laraveltoolkit\Tests\Model\Product;
 
 it('can run all jobs', function () {
@@ -63,4 +64,22 @@ it('can run all jobs', function () {
     expect($disk->exists($assetPath))->toBeFalse()
         ->and($disk->exists($assetSubDir1))->toBeFalse()
         ->and($disk->exists($assetSubDir2))->toBeFalse();
+});
+
+it('can break after long garbage run', function () {
+    $this->withoutDefer();
+    Queue::fake([TrashBinCleaner::class]);
+    $disk = Storage::fake('local');
+
+    for ($i = 0; $i < 10; $i++) {
+        $invalidFakeTrashBinUuid = StoredAssets::trashBinDeadlineTimestamp(now()->subMonth()).'-'.Str::uuid()->toString();
+        $invalidFakeTrashBinPath = StoredAssets::trashBinPath($invalidFakeTrashBinUuid);
+        $invalidFakeTrashBinPathname = $invalidFakeTrashBinPath.'test.txt';
+        $disk->put($invalidFakeTrashBinPathname, '');
+    }
+    config()->set('laraveltoolkit.stored_assets.trash_bin_cleaner_timeout', -1);
+
+    new TrashBinCleaner('local')->handle();
+    Queue::assertPushed(TrashBinCleaner::class);
+
 });

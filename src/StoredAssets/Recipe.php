@@ -17,8 +17,8 @@ abstract class Recipe implements Castable
     private readonly AssetIntent $baseAsset;
 
     protected function __construct(
-        readonly protected Model $model,
-        readonly protected string $field,
+        protected readonly Model $model,
+        protected readonly string $field,
         mixed $source
     ) {
         $pathname = match (true) {

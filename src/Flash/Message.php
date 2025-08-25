@@ -7,14 +7,14 @@ use Illuminate\Support\Str;
 class Message
 {
     private function __construct(
-        readonly public string $id,
-        readonly public Severity $severity,
-        readonly public ?string $summary,
-        readonly public string $detail,
+        public readonly string $id,
+        public readonly Severity $severity,
+        public readonly ?string $summary,
+        public readonly string $detail,
         public ?bool $closable,
         public ?int $life,
         public ?string $group,
-        readonly public float $createdAt
+        public readonly float $createdAt
     ) {}
 
     public static function create(

@@ -23,7 +23,7 @@ class AssetIntent
     protected bool $public = false;
 
     private function __construct(
-        readonly public string $pathname,
+        public readonly string $pathname,
     ) {
         $this->disk = StoredAssets::defaultDisk();
         $this->filenameStoreType = StoredAssets::defaultFilenameStoreType();

@@ -181,6 +181,7 @@ return [
         'path' => env('LT_STORED_ASSETS_PATH', 'assets'),
         'filename_store_type' => FilenameStoreType::UUID,
         'subdirectory_chars' => env('LT_STORED_ASSETS_SUBDIRECTORY_CHARS', 2),
+        'trash_bin_cleaner_timeout' => 55,
         'trash_bin' => [
             'folder' => env('LT_STORED_ASSETS_TRASH_BIN_FOLDER', '$TRASH_BIN'),
             'deadline' => env('LT_STORED_ASSETS_TRASH_BIN_DEADLINE', 60 * 24 * 15),
