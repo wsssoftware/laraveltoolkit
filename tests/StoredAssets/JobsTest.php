@@ -7,6 +7,7 @@ use Laraveltoolkit\StoredAssets\Jobs\TrashBinCleaner;
 use Laraveltoolkit\Tests\Model\Product;
 
 it('can run all jobs', function () {
+    config()->set('laraveltoolkit.stored_assets.trash_bin_cleaner_timeout', 55);
     $disk = Storage::fake('local');
 
     $validFakeTrashBinUuid = StoredAssets::trashBinDeadlineTimestamp().'-'.Str::uuid()->toString();
