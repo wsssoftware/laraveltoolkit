@@ -84,7 +84,6 @@
       <path value="$PROJECT_DIR$/vendor/symfony/deprecation-contracts" />
       <path value="$PROJECT_DIR$/vendor/ramsey/uuid" />
       <path value="$PROJECT_DIR$/vendor/phpunit/php-timer" />
-      <path value="$PROJECT_DIR$/vendor/symfony/clock" />
       <path value="$PROJECT_DIR$/vendor/phpunit/phpunit" />
       <path value="$PROJECT_DIR$/vendor/symfony/finder" />
       <path value="$PROJECT_DIR$/vendor/phpunit/php-text-template" />
@@ -135,7 +134,6 @@
       <path value="$PROJECT_DIR$/vendor/brick/math" />
       <path value="$PROJECT_DIR$/vendor/phar-io/version" />
       <path value="$PROJECT_DIR$/vendor/doctrine/lexer" />
-      <path value="$PROJECT_DIR$/vendor/doctrine/deprecations" />
       <path value="$PROJECT_DIR$/vendor/doctrine/inflector" />
       <path value="$PROJECT_DIR$/vendor/psy/psysh" />
       <path value="$PROJECT_DIR$/vendor/phar-io/manifest" />
@@ -162,9 +160,6 @@
       <path value="$PROJECT_DIR$/vendor/pestphp/pest-plugin-laravel" />
       <path value="$PROJECT_DIR$/vendor/pestphp/pest-plugin-arch" />
       <path value="$PROJECT_DIR$/vendor/vlucas/phpdotenv" />
-      <path value="$PROJECT_DIR$/vendor/php-di/php-di" />
-      <path value="$PROJECT_DIR$/vendor/phpstan/phpdoc-parser" />
-      <path value="$PROJECT_DIR$/vendor/php-di/invoker" />
       <path value="$PROJECT_DIR$/vendor/staabm/side-effects-detector" />
       <path value="$PROJECT_DIR$/vendor/graham-campbell/result-type" />
       <path value="$PROJECT_DIR$/vendor/spatie/backtrace" />
@@ -178,8 +173,12 @@
       <path value="$PROJECT_DIR$/vendor/czproject/git-php" />
       <path value="$PROJECT_DIR$/vendor/pestphp/pest-plugin-profanity" />
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php84" />
-      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php85" />
       <path value="$PROJECT_DIR$/vendor/_laravel_idea" />
+      <path value="$PROJECT_DIR$/vendor/paragonie/random_compat" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php81" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php72" />
+      <path value="$PROJECT_DIR$/vendor/symfony/clock" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php85" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.4" />
