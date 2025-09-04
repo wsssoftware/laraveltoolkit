@@ -2,38 +2,42 @@
 
 namespace Laraveltoolkit\Flash;
 
+use Illuminate\Session\SessionManager;
 use Illuminate\Support\Collection;
 
 class Flash
 {
     use FlashTests;
 
-    protected const string SESSION_KEY = 'lt.flashes';
+    protected const string SESSION_KEY = 'laraveltoolkit.flashes';
 
     protected Collection $messages;
+
+    protected SessionManager $session;
 
     public function __construct()
     {
         $this->messages = collect();
+        $this->session = app(SessionManager::class);
     }
 
     protected function add(Message $message): Message
     {
         $this->messages->push($message);
-        session()->push(self::SESSION_KEY, $message);
+        $this->session->push(self::SESSION_KEY, $message);
 
         return $message;
     }
 
     public function clear(): void
     {
-        session()->put(self::SESSION_KEY, []);
+        $this->session->forget(self::SESSION_KEY);
         $this->messages = collect();
     }
 
     public function pullMessages(): Collection
     {
-        return collect(session()->pull(self::SESSION_KEY, []))
+        return collect($this->session->pull(self::SESSION_KEY, []))
             ->ensure(Message::class)
             ->sortBy('createdAt');
     }
