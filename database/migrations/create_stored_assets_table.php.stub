@@ -32,4 +32,12 @@ return new class extends Migration
     {
         Schema::dropIfExists('stored_assets');
     }
+
+    /**
+     * Get the database connection driver.
+     */
+    protected function driver(): string
+    {
+        return DB::connection($this->getConnection())->getDriverName();
+    }
 };
