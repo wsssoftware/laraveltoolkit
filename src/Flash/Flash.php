@@ -9,7 +9,7 @@ class Flash
 {
     use FlashTests;
 
-    protected const string SESSION_KEY = 'laraveltoolkit.flashes';
+    public const string SESSION_KEY = 'laraveltoolkit.flashes';
 
     protected Collection $messages;
 

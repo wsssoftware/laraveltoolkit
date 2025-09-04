@@ -10,13 +10,14 @@ use Laraveltoolkit\Actions\Flash\GetMessages;
 use Laraveltoolkit\Actions\Sitemap\RenderSitemap;
 use Laraveltoolkit\Deploy\MaintenanceController;
 use Laraveltoolkit\Facades\SEO;
+use Laraveltoolkit\Flash\EnsureFlashClearedMiddleware;
 
 Route::middleware('web')
     ->domain(config('laraveltoolkit.deploy.domain'))
     ->get(config('laraveltoolkit.deploy.path'), MaintenanceController::class)
     ->name('maintenance');
 
-Route::middleware('web')->get('/lt/flash-get-messages', GetMessages::class)
+Route::middleware(['web', EnsureFlashClearedMiddleware::class])->get('/lt/flash-get-messages', GetMessages::class)
     ->name('lt.flash.get_messages');
 
 Route::middleware('web')->prefix('lt/filepond')->group(function () {
