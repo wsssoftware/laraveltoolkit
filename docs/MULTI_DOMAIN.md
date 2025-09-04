@@ -75,6 +75,15 @@ return Application::configure(basePath: dirname(__DIR__))
     })->create();
 ```
 
+### 4. NGINX
+
+If you are using NGINX as your server, it will manage yours `OPTIONS` request, so, they will not processed by Laravel Cors. To Avoid this add this snipped to you site configuration:
+
+```nginx
+    if ($request_method = OPTIONS) {
+        rewrite ^ /index.php last;
+    }
+```
 
 
 
