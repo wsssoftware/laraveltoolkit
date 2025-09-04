@@ -19,6 +19,7 @@ return new class extends Migration
             $table->timestamp('created_at')->nullable();
             match ($this->driver()) {
                 'mariadb', 'mysql' => $table->rawIndex('id(4)', 'idx_id_prefix'),
+                'sqlite' => null,
             };
 
             $table->index(["id", "model", "field"]);
