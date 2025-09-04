@@ -140,6 +140,7 @@ class LaraveltoolkitServiceProvider extends PackageServiceProvider
             }
 
         });
+
         $this->app->booted(callback: function () {
             /** @var \BackedEnum&\Laraveltoolkit\ACL\HasDenyResponse|null $rolesEnum */
             $rolesEnum = ACL::rolesEnum();
