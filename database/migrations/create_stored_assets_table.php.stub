@@ -17,9 +17,9 @@ return new class extends Migration
             $table->string("field");
             $table->json('assets');
             $table->timestamp('created_at')->nullable();
-             match ($this->driver()) {
+            match ($this->driver()) {
                 'mariadb', 'mysql' => $table->rawIndex('id(4)', 'idx_id_prefix'),
-             };
+            };
 
             $table->index(["id", "model", "field"]);
         });
