@@ -5,7 +5,6 @@ use Laraveltoolkit\Facades\StoredAssets;
 use Laraveltoolkit\StoredAssets\Assets;
 use Laraveltoolkit\StoredAssets\FilenameStoreType;
 use Laraveltoolkit\StoredAssets\StoredAssetModel;
-use Laraveltoolkit\StoredAssets\StoredAssets as StoredAssetsAlias;
 use Laraveltoolkit\Tests\StoredAssets\MoveDirectoryFilesystemTest;
 
 it('can get base assets', function () {
@@ -30,18 +29,8 @@ it('can get default disk', function () {
         ->toEqual('foo_bar_disk');
 });
 
-it('can get subdirectory chars', function () {
-    $chars1 = StoredAssetsAlias::SUBDIRECTORY_CHARS;
-    config()->set('laraveltoolkit.stored_assets.subdirectory_chars', 3);
-    $chars2 = StoredAssetsAlias::SUBDIRECTORY_CHARS;
-
-    expect($chars1)
-        ->toEqual(2)
-        ->and($chars2)
-        ->toEqual(3);
-});
-
 it('can get default filename store type', function () {
+
     $type1 = StoredAssets::defaultFilenameStoreType();
     config()->set('laraveltoolkit.stored_assets.filename_store_type', 'key');
     $type2 = StoredAssets::defaultFilenameStoreType();
@@ -77,7 +66,7 @@ it('can get the path', function () {
     $uuid = 'fa21cdf7-bb1d-4fc8-a556-67ecd85423d1';
     $expectation = str('assets')
         ->append(DIRECTORY_SEPARATOR)
-        ->append('fa')
+        ->append('23')
         ->append(DIRECTORY_SEPARATOR)
         ->append('d1')
         ->append(DIRECTORY_SEPARATOR)

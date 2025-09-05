@@ -61,6 +61,8 @@ it('test asset methods', function () {
         ->and($asset->readStream())
         ->toBeResource()
         ->and($asset->url())
+        ->toBeString()
+        ->and($asset->temporaryUrl(today()->addDay()))
         ->toBeString();
 
 });
