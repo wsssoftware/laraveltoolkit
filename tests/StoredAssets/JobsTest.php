@@ -38,8 +38,8 @@ it('can run all jobs', function () {
     ]);
     $uuid = $product->image_uuid;
     $assetPath = StoredAssets::path($uuid);
-    $assetSubDir1 = $assetPath.'../';
-    $assetSubDir2 = $assetSubDir1.'../';
+    $assetSubDir1 = str($assetPath)->beforeLast('/')->beforeLast('/')->append('/')->toString();
+    $assetSubDir2 = str($assetSubDir1)->beforeLast('/')->beforeLast('/')->append('/')->toString();
     $product->delete();
 
     expect($disk->exists($assetPath))->toBeTrue()

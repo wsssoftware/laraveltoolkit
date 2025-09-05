@@ -61,9 +61,11 @@ class GarbageCollector implements ShouldBeUnique, ShouldQueue
                 continue;
             }
 
-            StoredAssets::modelQuery()
-                ->selectRaw("CONCAT(field, '::', model) as field_model")
-                ->where('id_suffix', $idSuffix)
+            $query = in_array(StoredAssets::newModel([])->getConnection()->getDriverName(), ['mariadb', 'mysql'])
+                ? StoredAssets::modelQuery()->where('id_suffix', $idSuffix)
+                : StoredAssets::modelQuery()->where('id', 'LIKE', "%$idSuffix");
+
+            $query->selectRaw("CONCAT(field, '::', model) as field_model")
                 ->groupBy('field_model')
                 ->get()
                 ->map(fn (Model $model) => $model->getAttribute('field_model'))
