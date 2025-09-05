@@ -4,18 +4,22 @@ namespace Laraveltoolkit\StoredAssets\Jobs;
 
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Laraveltoolkit\Facades\StoredAssets;
-use Laraveltoolkit\StoredAssets\StoredAssetModel;
+
+use function Pest\Laravel\get;
 
 class GarbageCollector implements ShouldBeUnique, ShouldQueue
 {
     use HasDisk, Queueable;
 
     protected const string MOVED_COUNT_CACHE_KEY = 'lt_stored_assets_garbage_collector_moved_items';
+
+    protected const string CLEANED_COUNT_CACHE_KEY = 'lt_stored_assets_garbage_collector_cleaned_items';
 
     /**
      * Create a new job instance.
@@ -42,47 +46,48 @@ class GarbageCollector implements ShouldBeUnique, ShouldQueue
         }
 
         foreach ($subDirectories as $subDirectory) {
-            $collection = collect($disk->directories($subDirectory))
-                ->map(fn (string $path) => str($path)->trim('/')->afterLast('/'))
-                ->filter(fn (string $uuid) => Str::isUuid($uuid));
-            if ($collection->isEmpty()) {
+            $idSuffix = str($subDirectory)
+                ->substrReplace('', 0, strlen(StoredAssets::basePath()))
+                ->remove(['/', '\\'])
+                ->toString();
+            /** @var Collection $assets */
+            $assets = collect($disk->directories($subDirectory))
+                ->map(fn (string $path) => str($path)->trim('/')->afterLast('/')->toString())
+                ->filter(fn (string $uuid) => Str::isUuid($uuid))
+                ->mapWithKeys(fn (string $uuid) => [$uuid => true]);
+            if ($assets->isEmpty()) {
                 $disk->deleteDirectory($subDirectory);
 
                 continue;
             }
-            do {
-                $inspectedUuids = $collection->pop(200)
-                    ->mapWithKeys(fn (string $uuid) => [$uuid => $uuid]);
-                StoredAssets::modelQuery()
-                    ->select('model', 'field')
-                    ->whereIn('id', $inspectedUuids)
-                    ->get()
-                    ->groupBy(fn (StoredAssetModel $asset) => "$asset->field::$asset->model")
-                    ->each(fn (Collection $group) => $this->inspectGroup($group, $inspectedUuids));
 
-                /** @var Collection $result */
-                $result = $inspectedUuids->mapWithKeys(fn (string $uuid
-                ) => [$uuid => StoredAssets::moveToTrashBin($this->disk, $uuid)]);
-                self::incrementCount($result->filter(fn (bool $success) => $success)->count());
-            } while ($collection->count() > 0);
+            StoredAssets::modelQuery()
+                ->selectRaw("CONCAT(field, '::', model) as field_model")
+                ->where('id_suffix', $idSuffix)
+                ->groupBy('field_model')
+                ->get()
+                ->map(fn (Model $model) => $model->getAttribute('field_model'))
+                ->each(fn (string $fieldModel) => $this->inspectGroup($fieldModel, $assets));
+
+            $result = $assets
+                ->mapWithKeys(fn (bool $value, string $uuid) => [
+                    $uuid => StoredAssets::moveToTrashBin($this->disk, $uuid),
+                ]);
+            self::incrementMovedCount($result->filter(fn (bool $success) => $success)->count());
         }
     }
 
-    /**
-     * @param  \Illuminate\Support\Collection<int, StoredAssetModel>  $group
-     */
-    protected function inspectGroup(Collection $group, Collection $inspectedUuids): void
+    protected function inspectGroup(string $fieldModel, Collection $assets): void
     {
-        $first = $group->first();
+        [$field, $model] = explode('::', $fieldModel);
         /** @var class-string<\Illuminate\Database\Eloquent\Model> $model */
-        $model = $first->model;
         $foundIds = $model::query()
             ->withoutGlobalScopes()
-            ->select([$first->field])
-            ->whereIn($first->field, $inspectedUuids)
+            ->select([$field])
+            ->whereIn($field, $assets->keys())
             ->get()
-            ->pluck("{$first->field}_uuid");
-        $inspectedUuids->forget($foundIds);
+            ->pluck("{$field}_uuid");
+        $assets->forget($foundIds);
     }
 
     /**
@@ -93,19 +98,31 @@ class GarbageCollector implements ShouldBeUnique, ShouldQueue
         return "$this->disk::$this->path";
     }
 
-    public static function incrementCount(int $by = 1): void
+    public static function incrementMovedCount(int $by = 1): void
     {
-        $oldValue = static::getCount();
+        $oldValue = static::getMovedCount();
         Cache::set(self::MOVED_COUNT_CACHE_KEY, $oldValue + $by);
     }
 
-    public static function getCount(): int
+    public static function incrementCleanedCount(int $by = 1): void
+    {
+        $oldValue = static::getCleanedCount();
+        Cache::set(self::CLEANED_COUNT_CACHE_KEY, $oldValue + $by);
+    }
+
+    public static function getMovedCount(): int
     {
         return Cache::get(self::MOVED_COUNT_CACHE_KEY, fn () => 0);
     }
 
-    public static function clearCount(): void
+    public static function getCleanedCount(): int
+    {
+        return Cache::get(self::CLEANED_COUNT_CACHE_KEY, fn () => 0);
+    }
+
+    public static function clearCounts(): void
     {
         Cache::forget(self::MOVED_COUNT_CACHE_KEY);
+        Cache::forget(self::CLEANED_COUNT_CACHE_KEY);
     }
 }

@@ -28,7 +28,7 @@ class GarbageCollectorManager implements ShouldBeUnique, ShouldQueue
      */
     public function handle(): void
     {
-        GarbageCollector::clearCount();
+        GarbageCollector::clearCounts();
         $chain = [];
         foreach ($this->disks as $diskName) {
             $disk = $this->disk($diskName);
@@ -41,6 +41,7 @@ class GarbageCollectorManager implements ShouldBeUnique, ShouldQueue
             $chain[] = new TrashBinCleaner($diskName);
         }
         $chain[] = new GarbageCollectorSummary;
+
         Bus::chain($chain)
             ->onQueue($this->queue)
             ->onConnection($this->connection)

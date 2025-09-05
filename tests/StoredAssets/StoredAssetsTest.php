@@ -5,6 +5,7 @@ use Laraveltoolkit\Facades\StoredAssets;
 use Laraveltoolkit\StoredAssets\Assets;
 use Laraveltoolkit\StoredAssets\FilenameStoreType;
 use Laraveltoolkit\StoredAssets\StoredAssetModel;
+use Laraveltoolkit\StoredAssets\StoredAssets as StoredAssetsAlias;
 use Laraveltoolkit\Tests\StoredAssets\MoveDirectoryFilesystemTest;
 
 it('can get base assets', function () {
@@ -30,9 +31,9 @@ it('can get default disk', function () {
 });
 
 it('can get subdirectory chars', function () {
-    $chars1 = StoredAssets::subdirectoryChars();
+    $chars1 = StoredAssetsAlias::SUBDIRECTORY_CHARS;
     config()->set('laraveltoolkit.stored_assets.subdirectory_chars', 3);
-    $chars2 = StoredAssets::subdirectoryChars();
+    $chars2 = StoredAssetsAlias::SUBDIRECTORY_CHARS;
 
     expect($chars1)
         ->toEqual(2)

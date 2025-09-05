@@ -16,9 +16,14 @@ class GarbageCollectorSummary implements ShouldBeUnique, ShouldQueue
      */
     public function handle(): void
     {
-        $count = GarbageCollector::getCount();
-        if ($count > 0) {
-            Log::info(sprintf('On stored assets, %s item(s) was moved to trash bin.', $count));
+        $movedCount = GarbageCollector::getMovedCount();
+        $cleanedCount = GarbageCollector::getCleanedCount();
+        if ($movedCount > 0 || $cleanedCount > 0) {
+            Log::info(sprintf(
+                'On stored assets, %s item(s) was moved to trash bin and %s was cleaned from trash bin.',
+                $movedCount,
+                $cleanedCount,
+            ));
         }
     }
 }

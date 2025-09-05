@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * @property string $id
+ * @property string $id_suffix
  * @property string $model
  * @property string $field
  * @property \Laraveltoolkit\StoredAssets\Assets $assets
@@ -43,6 +44,7 @@ class StoredAssetModel extends Model
     {
         return [
             'id' => 'string',
+            'id_suffix' => 'string',
             'model' => 'string',
             'field' => 'string',
             'assets' => Assets::class,

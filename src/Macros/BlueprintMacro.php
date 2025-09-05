@@ -15,7 +15,7 @@ class BlueprintMacro
     public function storedAsset(): void
     {
         Blueprint::macro('storedAsset', function (string $column): ColumnDefinition {
-            return $this->uuid($column);
+            return $this->uuid($column)->index();
         });
     }
 }

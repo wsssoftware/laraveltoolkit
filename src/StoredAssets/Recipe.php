@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\File;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use Laraveltoolkit\Facades\StoredAssets;
 use Laraveltoolkit\StoredAssets\Casts\StoredAssetCast;
+use Ramsey\Uuid\Uuid;
 
 abstract class Recipe implements Castable
 {
@@ -50,7 +50,7 @@ abstract class Recipe implements Castable
         $result = $this->prepareForSave($this->baseAsset);
         $assets = ($result instanceof AssetIntent ? collect([$result]) : $result)->ensure(AssetIntent::class);
         $this->ensureNotDuplicated($assets);
-        $uuid = Str::uuid()->toString();
+        $uuid = Uuid::uuid7()->toString();
 
         $assets = $assets->reduce(
             fn (Assets $carry, AssetIntent $intent) => $carry->put($intent->getKey(), $intent->store($uuid)),

@@ -13,6 +13,8 @@ use Illuminate\Support\Str;
  */
 class StoredAssets
 {
+    public const int SUBDIRECTORY_CHARS = 2;
+
     public function basePath(): string
     {
         return config('laraveltoolkit.stored_assets.path');
@@ -135,8 +137,8 @@ class StoredAssets
 
     public function path(string $uuid, ?string $path = null): string
     {
-        $part1 = substr($uuid, 0, $this->subdirectoryChars());
-        $part2 = substr($uuid, $this->subdirectoryChars() * -1, $this->subdirectoryChars());
+        $part1 = substr($uuid, self::SUBDIRECTORY_CHARS * -2, self::SUBDIRECTORY_CHARS);
+        $part2 = substr($uuid, self::SUBDIRECTORY_CHARS * -1, self::SUBDIRECTORY_CHARS);
 
         return str($this->basePath())
             ->append(DIRECTORY_SEPARATOR)
@@ -162,11 +164,6 @@ class StoredAssets
         }
 
         return $this->moveDirectory($disk, $path, $this->path($uuid));
-    }
-
-    public function subdirectoryChars(): int
-    {
-        return config('laraveltoolkit.stored_assets.subdirectory_chars');
     }
 
     public function trashBinDeadlineTimestamp(?Carbon $from = null): int

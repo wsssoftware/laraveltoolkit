@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,14 +12,14 @@ return new class extends Migration
     {
         Schema::create('stored_assets', function (Blueprint $table) {
             $table->uuid("id")->primary()->unique();
+            match ($this->driver()) {
+                'mariadb', 'mysql' => $table->string('id_suffix', 4)->storedAs('RIGHT(id, 4)'),
+                default => $table->string('id_suffix', 4)->nullable(),
+            };
             $table->string("model");
             $table->string("field");
             $table->json('assets');
             $table->timestamp('created_at')->nullable();
-            match ($this->driver()) {
-                'mariadb', 'mysql' => $table->rawIndex('id(4)', 'idx_id_prefix'),
-                'sqlite' => null,
-            };
 
             $table->index(["id", "model", "field"]);
         });

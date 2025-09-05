@@ -2,6 +2,7 @@
 
 namespace Laraveltoolkit\StoredAssets;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Filesystem\FilesystemAdapter;
@@ -38,6 +39,11 @@ readonly class Asset implements Arrayable
     public function url(): string
     {
         return $this->disk()->url($this->pathname);
+    }
+
+    public function temporaryUrl(Carbon $expiration): string
+    {
+        return $this->disk()->temporaryUrl($this->pathname, $expiration);
     }
 
     public function toArray(): array

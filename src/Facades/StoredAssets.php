@@ -21,7 +21,6 @@ use Laraveltoolkit\StoredAssets\StoredAssetModel;
  * @method static bool moveToTrashBin(string $disk, string $uuid)
  * @method static string path(string $uuid, ?string $path = null)
  * @method static bool restoreFromTrashBin(string $disk, string $uuid)
- * @method static int subdirectoryChars()
  * @method static int trashBinDeadlineTimestamp(Carbon $from = null)
  * @method static string trashBinPath(string $path = null)
  *

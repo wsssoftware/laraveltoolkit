@@ -166,7 +166,6 @@ return [
     | -> model: File model. Used to allow a dev extend model.
     | -> path: Base path from stored files on disk.
     | -> filename_store_type: Default stored file filename.
-    | -> subdirectory_chars: How many chars subdirectory 1 and 2 will have.
     |    More is useful for a very huge file database. 2 it's acceptable for 50kk
     |    or fewer files. A file with uuid: "7c23b...2f1505" with 2 chars will
     |    be stored on "/assets/7c/05/7c23b...2f1505/..."
@@ -180,7 +179,6 @@ return [
         'model' => StoredAssetModel::class,
         'path' => env('LT_STORED_ASSETS_PATH', 'assets'),
         'filename_store_type' => FilenameStoreType::UUID,
-        'subdirectory_chars' => env('LT_STORED_ASSETS_SUBDIRECTORY_CHARS', 2),
         'trash_bin_cleaner_timeout' => 55,
         'trash_bin' => [
             'folder' => env('LT_STORED_ASSETS_TRASH_BIN_FOLDER', '$TRASH_BIN'),

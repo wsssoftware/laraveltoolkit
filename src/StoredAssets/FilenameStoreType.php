@@ -2,7 +2,7 @@
 
 namespace Laraveltoolkit\StoredAssets;
 
-use Illuminate\Support\Str;
+use Ramsey\Uuid\Uuid;
 
 enum FilenameStoreType: string
 {
@@ -13,7 +13,7 @@ enum FilenameStoreType: string
     {
         return match ($this) {
             self::KEY => str($intent->getKey())->camel()->kebab()->toString(),
-            self::UUID => Str::uuid()->toString(),
+            self::UUID => Uuid::uuid7()->toString(),
         }.(! empty($extension) ? '.'.$extension : '');
     }
 }

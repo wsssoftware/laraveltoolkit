@@ -5,7 +5,6 @@ namespace Laraveltoolkit\StoredAssets\Jobs;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Laraveltoolkit\Facades\StoredAssets;
 use Laraveltoolkit\Support\HasTimeoutHandler;
@@ -49,22 +48,14 @@ class TrashBinCleaner implements ShouldBeUnique, ShouldQueue
         foreach ($readyToDelete as $uuid) {
             if (StoredAssets::deleteFromTrashBin($this->disk, $uuid)) {
                 $deleted++;
+                GarbageCollector::incrementCleanedCount();
             }
             if ($this->itsApproachingTimeout()) {
                 break;
             }
         }
 
-        $directoriesCount = $directories->count();
         $availableToDelete = $readyToDelete->count();
-        Log::info(sprintf(
-            'In the trash bin on the "%s" disk, %s found, of which %s of %s deleted because %s had reached.',
-            $this->disk,
-            $directoriesCount.' '.($directoriesCount === 1 ? 'item was' : 'items were'),
-            $deleted,
-            $availableToDelete.' '.($deleted === 1 ? 'item was' : 'items were'),
-            $deleted === 1 ? 'its deadline' : 'their deadlines',
-        ));
         if ($deleted < $availableToDelete) {
             defer(fn () => self::dispatch($this->disk));
         }
