@@ -6,8 +6,6 @@ trait HasTimeoutHandler
 {
     private readonly float $timeoutHandlerStartedAt;
 
-    protected int $safeTimeout = 55;
-
     protected function startTimeoutHandler(): void
     {
         $this->timeoutHandlerStartedAt = microtime(true);
@@ -29,6 +27,11 @@ trait HasTimeoutHandler
      */
     protected function itsApproachingTimeout(): bool
     {
-        return $this->elapsedTime() > $this->safeTimeout;
+        return $this->elapsedTime() > $this->safeTimeout();
+    }
+
+    protected function safeTimeout(): int
+    {
+        return 55;
     }
 }
