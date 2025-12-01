@@ -32,8 +32,9 @@ trait HasStoredAssets
 
     private static function initStoredAssetFieldsAndRelations(): void
     {
+        /** @var Model $model */
         $model = static::newModelInstance();
-        foreach ($model->getCasts() as $field => $cast) {
+        foreach ($model->casts() as $field => $cast) {
             $validClass = class_exists($cast) && is_subclass_of($cast, Recipe::class);
             if ($validClass && ! $model->isRelation($field)) {
                 $uuidField = "{$field}_uuid";
