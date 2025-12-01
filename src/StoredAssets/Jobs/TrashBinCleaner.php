@@ -18,9 +18,7 @@ class TrashBinCleaner implements ShouldBeUnique, ShouldQueue
      */
     public function __construct(
         protected string $disk,
-    ) {
-        $this->safeTimeout = config('laraveltoolkit.stored_assets.trash_bin_cleaner_timeout', 55);
-    }
+    ) {}
 
     /**
      * Execute the job.
@@ -59,6 +57,11 @@ class TrashBinCleaner implements ShouldBeUnique, ShouldQueue
         if ($deleted < $availableToDelete) {
             defer(fn () => self::dispatch($this->disk));
         }
+    }
+
+    protected function safeTimeout(): int
+    {
+        return config('laraveltoolkit.stored_assets.trash_bin_cleaner_timeout', 55);
     }
 
     /**

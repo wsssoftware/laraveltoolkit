@@ -34,7 +34,7 @@ class MoveDirectoryFilesystemTest extends Filesystem
         return $this->deleteDirectory;
     }
 
-    public function files($directory, $hidden = false)
+    public function files($directory, $hidden = false, array|string|int $depth = 0)
     {
         return ['foo'];
     }
