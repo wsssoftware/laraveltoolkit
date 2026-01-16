@@ -4,6 +4,7 @@ namespace Laraveltoolkit\StoredAssets\Casts;
 
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
+use Laraveltoolkit\StoredAssets\Assets;
 use Laraveltoolkit\StoredAssets\HasStoredAssets;
 use Laraveltoolkit\StoredAssets\Recipe;
 
@@ -31,6 +32,6 @@ class StoredAssetCast implements CastsAttributes
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): mixed
     {
-        return $value;
+        return $value instanceof Assets ? $value->uuid : $value;
     }
 }
