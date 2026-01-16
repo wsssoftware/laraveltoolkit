@@ -35,7 +35,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -66,7 +66,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -90,7 +90,7 @@ jobs:
       - name: Execute coverage
         run: php -dxdebug.mode=coverage ./vendor/bin/pest --coverage-clove ./.build/cache/coverage.xml
       - name: "Publish coverage report to Codecov"
-        uses: "codecov/codecov-action@v5.5.1"
+        uses: "codecov/codecov-action@v5.5.2"
         with:
           files: ./.build/cache/coverage.xml
         env:
