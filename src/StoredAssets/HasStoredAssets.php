@@ -14,7 +14,10 @@ trait HasStoredAssets
 
     protected static function bootHasStoredAssets(): void
     {
-        self::initStoredAssetFieldsAndRelations();
+
+        self::whenBooted(function () {
+            self::initStoredAssetFieldsAndRelations();
+        });
         self::saving(function (Model $model) {
             foreach ($model->getDirty() as $field => $item) {
                 if (! $item instanceof Recipe) {
@@ -52,7 +55,7 @@ trait HasStoredAssets
     {
         if (isset(self::$storedAssetFields[$key])) {
             if ($this->hasCast($key)) {
-                /** @var class-string<\Laraveltoolkit\StoredAssets\Recipe> $cast */
+                /** @var class-string<Recipe> $cast */
                 $cast = $this->casts()[$key];
                 $value = $cast::parse($this, $key, $value);
             }

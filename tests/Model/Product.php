@@ -3,21 +3,23 @@
 namespace Laraveltoolkit\Tests\Model;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
+use Laraveltoolkit\StoredAssets\Assets;
 use Laraveltoolkit\StoredAssets\HasStoredAssets;
 
 /**
  * @property int $id
  * @property int|null $user_id
- * @property string|\Laraveltoolkit\StoredAssets\Assets $image
- * @property \Illuminate\Support\Carbon $created_at
- * @property \Illuminate\Support\Carbon $updated_at
+ * @property string|Assets $image
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class Product extends Model
 {
     use HasStoredAssets;
 
     /**
-     * The attributes that are mass assignable.
+     * The attributes that are mass-assignable.
      *
      * @var array<int, string>
      */
