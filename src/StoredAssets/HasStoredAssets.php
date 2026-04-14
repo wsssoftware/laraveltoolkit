@@ -14,10 +14,11 @@ trait HasStoredAssets
 
     protected static function bootHasStoredAssets(): void
     {
-
-        self::whenBooted(function () {
+        if (method_exists(static::class, 'whenBooted')) {
+            self::whenBooted(fn () => self::initStoredAssetFieldsAndRelations());
+        } else {
             self::initStoredAssetFieldsAndRelations();
-        });
+        }
         self::saving(function (Model $model) {
             foreach ($model->getDirty() as $field => $item) {
                 if (! $item instanceof Recipe) {
