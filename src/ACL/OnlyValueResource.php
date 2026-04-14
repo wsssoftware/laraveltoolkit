@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @property Collection<string, \Laraveltoolkit\ACL\Policy> $resource
+ * @property Collection<string, Policy> $resource
  */
 class OnlyValueResource extends JsonResource
 {

@@ -13,7 +13,7 @@ class PolicyCast implements CastsAttributes
     /**
      * Cast the given value.
      *
-     * @param  \Laraveltoolkit\ACL\UserPermission  $model
+     * @param  UserPermission  $model
      * @param  array<string, mixed>  $attributes
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): mixed
@@ -32,7 +32,7 @@ class PolicyCast implements CastsAttributes
     /**
      * Prepare the given value for storage.
      *
-     * @param  \Laraveltoolkit\ACL\UserPermission  $model
+     * @param  UserPermission  $model
      * @param  array<string, mixed>  $attributes
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): mixed

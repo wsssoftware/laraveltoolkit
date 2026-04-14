@@ -19,7 +19,7 @@ class Sitemap
     protected bool $locked = false;
 
     /**
-     * @var \Illuminate\Support\Collection<int, Index|Url>
+     * @var Collection<int, Index|Url>
      */
     protected Collection $items;
 
@@ -114,7 +114,7 @@ class Sitemap
     }
 
     /**
-     * @return \Illuminate\Support\Collection<int, Index,Url>
+     * @return Collection<int, Index,Url>
      */
     public function process(string $domain, ?string $index): Collection
     {

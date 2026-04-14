@@ -20,7 +20,7 @@ readonly class Image
 
     public function toUrl(): string
     {
-        /** @var \Illuminate\Filesystem\FilesystemAdapter $disk */
+        /** @var FilesystemAdapter $disk */
         $disk = Storage::disk($this->disk);
         $lastChange = Cache::remember(
             "seo_image:$this->disk:$this->path",

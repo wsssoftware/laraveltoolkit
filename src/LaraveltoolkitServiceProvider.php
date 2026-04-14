@@ -7,8 +7,10 @@ use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
+use Laraveltoolkit\ACL\HasDenyResponse;
 use Laraveltoolkit\ACL\MakeACLModelCommand;
 use Laraveltoolkit\ACL\RolesFirewallMiddleware;
+use Laraveltoolkit\ACL\UserPermission;
 use Laraveltoolkit\Deploy\Commands\Run;
 use Laraveltoolkit\Deploy\Commands\Step1;
 use Laraveltoolkit\Deploy\Commands\Step2;
@@ -121,12 +123,12 @@ class LaraveltoolkitServiceProvider extends PackageServiceProvider
     protected function bootGates(): void
     {
         $this->app->booted(callback: function () {
-            /** @var \Laraveltoolkit\ACL\UserPermission|null $model */
+            /** @var UserPermission|null $model */
             $model = ACL::model();
             if ($model === null) {
                 return;
             }
-            /** @var \Laraveltoolkit\ACL\UserPermission $userPermission */
+            /** @var UserPermission $userPermission */
             $userPermission = new ($model);
             foreach ($userPermission->getPolicies() as $policy) {
                 foreach ($policy->rules as $rule) {
@@ -142,7 +144,7 @@ class LaraveltoolkitServiceProvider extends PackageServiceProvider
         });
 
         $this->app->booted(callback: function () {
-            /** @var \BackedEnum&\Laraveltoolkit\ACL\HasDenyResponse|null $rolesEnum */
+            /** @var \BackedEnum&HasDenyResponse|null $rolesEnum */
             $rolesEnum = ACL::rolesEnum();
             if ($rolesEnum === null) {
                 return;

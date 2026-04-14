@@ -1,5 +1,14 @@
 <?php
 
+use Illuminate\Support\Str;
+use Laraveltoolkit\Deploy\Commands\Actions\CacheApplication;
+use Laraveltoolkit\Deploy\Commands\Actions\ComposerUpdate;
+use Laraveltoolkit\Deploy\Commands\Actions\GitPull;
+use Laraveltoolkit\Deploy\Commands\Actions\MigrateDatabase;
+use Laraveltoolkit\Deploy\Commands\Actions\NpmUpdateAndBuild;
+use Laraveltoolkit\Deploy\Commands\Actions\Pm2Restart;
+use Laraveltoolkit\Deploy\Commands\Actions\SeedDatabase;
+use Laraveltoolkit\Deploy\Commands\Actions\TerminateHorizon;
 use Laraveltoolkit\Deploy\Intent;
 use Laraveltoolkit\StoredAssets\FilenameStoreType;
 use Laraveltoolkit\StoredAssets\StoredAssetModel;
@@ -16,20 +25,20 @@ return [
     'deploy' => [
         'domain' => env('APP_DOMAIN', 'localhost'),
         'path' => '/maintenance',
-        'bypass_secret' => \Illuminate\Support\Str::password(10, true, true, false),
+        'bypass_secret' => Str::password(10, true, true, false),
         'inertia_component' => 'Maintenance',
         'default_redirect' => '/',
         'step1' => [
-            Intent::make(\Laraveltoolkit\Deploy\Commands\Actions\GitPull::class, ['--release' => '1.']),
-            Intent::make(\Laraveltoolkit\Deploy\Commands\Actions\ComposerUpdate::class),
+            Intent::make(GitPull::class, ['--release' => '1.']),
+            Intent::make(ComposerUpdate::class),
         ],
         'step2' => [
-            Intent::make(\Laraveltoolkit\Deploy\Commands\Actions\NpmUpdateAndBuild::class),
-            Intent::make(\Laraveltoolkit\Deploy\Commands\Actions\MigrateDatabase::class),
-            Intent::make(\Laraveltoolkit\Deploy\Commands\Actions\SeedDatabase::class),
-            Intent::make(\Laraveltoolkit\Deploy\Commands\Actions\CacheApplication::class),
-            Intent::make(\Laraveltoolkit\Deploy\Commands\Actions\TerminateHorizon::class),
-            Intent::make(\Laraveltoolkit\Deploy\Commands\Actions\Pm2Restart::class),
+            Intent::make(NpmUpdateAndBuild::class),
+            Intent::make(MigrateDatabase::class),
+            Intent::make(SeedDatabase::class),
+            Intent::make(CacheApplication::class),
+            Intent::make(TerminateHorizon::class),
+            Intent::make(Pm2Restart::class),
         ],
     ],
 

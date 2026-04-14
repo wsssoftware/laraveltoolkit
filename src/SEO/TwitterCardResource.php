@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @property \Laraveltoolkit\SEO\TwitterCard $resource
+ * @property TwitterCard $resource
  */
 class TwitterCardResource extends JsonResource
 {

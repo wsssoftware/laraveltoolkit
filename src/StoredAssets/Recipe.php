@@ -30,7 +30,7 @@ abstract class Recipe implements Castable
     }
 
     /**
-     * @return \Laraveltoolkit\StoredAssets\AssetIntent|\Illuminate\Support\Collection<int, \Laraveltoolkit\StoredAssets\AssetIntent>
+     * @return AssetIntent|Collection<int, AssetIntent>
      */
     abstract protected function prepareForSave(AssetIntent $baseAsset): AssetIntent|Collection;
 

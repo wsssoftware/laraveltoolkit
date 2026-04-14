@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @property \Laraveltoolkit\Flash\Message $resource
+ * @property Message $resource
  */
 class FlashResource extends JsonResource
 {

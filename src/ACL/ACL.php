@@ -29,7 +29,7 @@ class ACL
     }
 
     /**
-     * @return class-string<\Laraveltoolkit\ACL\UserPermission>
+     * @return class-string<UserPermission>
      */
     public function model(): ?string
     {

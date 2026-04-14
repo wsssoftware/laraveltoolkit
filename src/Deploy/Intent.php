@@ -3,9 +3,10 @@
 namespace Laraveltoolkit\Deploy;
 
 use Illuminate\Console\Command;
+use Laraveltoolkit\Deploy\Commands\Actions\Action;
 
 /**
- * @property class-string<\Laraveltoolkit\Deploy\Commands\Actions\Action> $commandFqn
+ * @property class-string<Action> $commandFqn
  */
 readonly class Intent
 {

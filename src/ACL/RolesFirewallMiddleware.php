@@ -15,11 +15,11 @@ class RolesFirewallMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
-        /** @var \BackedEnum&\Laraveltoolkit\ACL\HasDenyResponse|null $enum */
+        /** @var \BackedEnum&HasDenyResponse|null $enum */
         $enum = ACL::rolesEnum();
         $roleGroups = collect($roles)
             ->map(fn (string $role) => str($role))
@@ -28,7 +28,7 @@ class RolesFirewallMiddleware
                 $index => $group->map(fn (Stringable $role) => $enum::from($role->after('!')->toString())),
             ]);
         foreach ($roleGroups as $method => $roles) {
-            /** @var \BackedEnum&\Laraveltoolkit\ACL\HasDenyResponse $role */
+            /** @var \BackedEnum&HasDenyResponse $role */
             foreach ($roles as $role) {
                 $ability = "roles::$role->value";
                 if (! Gate::{$method}($ability)) {

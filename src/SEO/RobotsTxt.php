@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 class RobotsTxt
 {
     /**
-     * @var \Illuminate\Support\Collection<string, \Laraveltoolkit\SEO\RobotsTxtRule>
+     * @var Collection<string, RobotsTxtRule>
      */
     public Collection $rules;
 

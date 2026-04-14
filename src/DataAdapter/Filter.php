@@ -9,7 +9,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 /**
- * @property Collection<int, \Laraveltoolkit\DataAdapter\Constraint> $constraints
+ * @property Collection<int, Constraint> $constraints
  */
 readonly class Filter
 {
@@ -21,7 +21,7 @@ readonly class Filter
     ) {}
 
     /**
-     * @return \Illuminate\Support\Collection<string, \Laraveltoolkit\DataAdapter\Filter>|null
+     * @return Collection<string, Filter>|null
      */
     public static function create(?array $filters, string $globalFilterName, EloquentBuilder $builder): ?Collection
     {

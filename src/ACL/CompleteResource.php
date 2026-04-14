@@ -7,7 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
 
 /**
- * @property Collection<string, \Laraveltoolkit\ACL\Policy> $resource
+ * @property Collection<string, Policy> $resource
  */
 class CompleteResource extends JsonResource
 {

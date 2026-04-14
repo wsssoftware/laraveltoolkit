@@ -6,12 +6,13 @@ use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Translation\PotentiallyTranslatedString;
 use Laraveltoolkit\Enum\Phone;
 
 readonly class PhoneRule implements ValidationRule
 {
     /**
-     * @var \Illuminate\Support\Collection<string, Phone>|null
+     * @var Collection<string, Phone>|null
      */
     public Collection $types;
 
@@ -66,7 +67,7 @@ readonly class PhoneRule implements ValidationRule
     /**
      * Run the validation rule.
      *
-     * @param  \Closure(string): \Illuminate\Translation\PotentiallyTranslatedString  $fail
+     * @param  Closure(string): PotentiallyTranslatedString  $fail
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {

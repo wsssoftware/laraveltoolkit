@@ -5,14 +5,15 @@ namespace Laraveltoolkit\StoredAssets;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Carbon;
 
 /**
  * @property string $id
  * @property string $id_suffix
  * @property string $model
  * @property string $field
- * @property \Laraveltoolkit\StoredAssets\Assets $assets
- * @property \Illuminate\Support\Carbon $created_at
+ * @property Assets $assets
+ * @property Carbon $created_at
  */
 class StoredAssetModel extends Model
 {
