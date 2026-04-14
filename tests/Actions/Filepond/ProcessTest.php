@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Laraveltoolkit\Facades\Filepond;
 
 it('can process a normal file', function () {
@@ -18,7 +19,7 @@ it('can process a chunk file', function () {
         str_repeat('c', 50_000),
     ];
 
-    \Illuminate\Support\Facades\Storage::fake(Filepond::diskName());
+    Storage::fake(Filepond::diskName());
 
     $response = $this->post(route('lt.filepond.process'), headers: ['upload_length' => 150_000]);
     $response->assertSuccessful();

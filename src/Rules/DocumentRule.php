@@ -4,6 +4,7 @@ namespace Laraveltoolkit\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Translation\PotentiallyTranslatedString;
 use Laraveltoolkit\Enum\Document;
 
 readonly class DocumentRule implements ValidationRule
@@ -32,7 +33,7 @@ readonly class DocumentRule implements ValidationRule
     /**
      * Run the validation rule.
      *
-     * @param  \Closure(string): \Illuminate\Translation\PotentiallyTranslatedString  $fail
+     * @param  Closure(string): PotentiallyTranslatedString  $fail
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {

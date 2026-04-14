@@ -1,12 +1,14 @@
 <?php
 
+use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Support\Facades\Storage;
 use Laraveltoolkit\Facades\Filepond;
 
 it('can revert an uploaded file', function () {
     $id = Str::uuid()->toString();
     $path = Filepond::path($id, 'foo.bar');
-    /** @var \Illuminate\Filesystem\FilesystemAdapter $disk */
-    $disk = \Illuminate\Support\Facades\Storage::fake(Filepond::diskName());
+    /** @var FilesystemAdapter $disk */
+    $disk = Storage::fake(Filepond::diskName());
     $disk->put($path, 'foo bar content');
 
     expect($disk->fileExists($path))

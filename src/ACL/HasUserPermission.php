@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Laraveltoolkit\Facades\ACL;
 
 /**
- * @property \Laraveltoolkit\ACL\UserPermission $userPermission
+ * @property UserPermission $userPermission
  */
 trait HasUserPermission
 {

@@ -82,7 +82,7 @@ class GarbageCollector implements ShouldBeUnique, ShouldQueue
     protected function inspectGroup(string $fieldModel, Collection $assets): void
     {
         [$field, $model] = explode('::', $fieldModel);
-        /** @var class-string<\Illuminate\Database\Eloquent\Model> $model */
+        /** @var class-string<Model> $model */
         $foundIds = $model::query()
             ->withoutGlobalScopes()
             ->select([$field])

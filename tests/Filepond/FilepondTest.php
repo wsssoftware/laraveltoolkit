@@ -1,11 +1,12 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Laraveltoolkit\Facades\Filepond;
 use Laraveltoolkit\Filepond\UploadedFile;
 
 it('can clear all files', function () {
-    $disk = \Illuminate\Support\Facades\Storage::fake(Filepond::diskName());
+    $disk = Storage::fake(Filepond::diskName());
     $disk->put(Filepond::path(Str::uuid(), 'text1.txt'), '');
     $disk->put(Filepond::path(Str::uuid(), 'text1.txt'), '');
     $disk->put(Filepond::path(Str::uuid(), 'text1.txt'), '');
@@ -28,7 +29,7 @@ it('can clear all files', function () {
 
 it('can send request', function () {
     $id = Str::uuid()->toString();
-    $disk = \Illuminate\Support\Facades\Storage::fake(Filepond::diskName());
+    $disk = Storage::fake(Filepond::diskName());
     $disk->put(Filepond::path($id, 'text1.txt'), '');
     Route::post('foo-bar', function (Request $request) {
         expect($request->filepond('foo'))
@@ -67,7 +68,7 @@ it('can do a complete flow', function () {
     $this->post('example-route', ['id' => $id])
         ->assertSuccessful();
 
-    expect(\Illuminate\Support\Facades\Storage::path('test/foo.jpg'))
+    expect(Storage::path('test/foo.jpg'))
         ->toBeFile()
         ->and(Filepond::disk()->path(Filepond::path($id, 'image.jpg')))
         ->not

@@ -1,7 +1,9 @@
 <?php
 
+use Illuminate\Support\Collection;
 use Laraveltoolkit\Actions\Sitemap\RenderSitemap;
 use Laraveltoolkit\Facades\Sitemap;
+use Laraveltoolkit\Sitemap\Url;
 
 it('can render', function () {
     config()->set('laraveltoolkit.sitemap.timeout', 120);
@@ -25,7 +27,7 @@ it('log on large files', function () {
     config()->set('laraveltoolkit.sitemap.max_file_size', 1024);
     $rs = new RenderSitemap;
     $content = str_repeat('1', 5_000);
-    $url = new \Laraveltoolkit\Sitemap\Url($content);
+    $url = new Url($content);
     Sitemap::addUrl($url);
 
     Log::shouldReceive('warning')
@@ -37,13 +39,13 @@ it('log on large files', function () {
 
 it('log on large items count', function () {
     config()->set('laraveltoolkit.sitemap.max_file_items', 100);
-    /** @var \Illuminate\Support\Collection $items */
+    /** @var Collection $items */
     $items = (new ReflectionClass(Sitemap::getFacadeRoot()::class))
         ->getProperty('items')
         ->getValue(Sitemap::getFacadeRoot());
     $rs = new RenderSitemap;
     for ($i = 1; $i <= 301; $i++) {
-        $items->push(new \Laraveltoolkit\Sitemap\Url("loc $i"));
+        $items->push(new Url("loc $i"));
     }
     Log::shouldReceive('warning')
         ->andThrow(Exception::class, 'large count');

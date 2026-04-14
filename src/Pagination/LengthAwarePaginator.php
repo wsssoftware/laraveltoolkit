@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 class LengthAwarePaginator extends \Illuminate\Pagination\LengthAwarePaginator
 {
     /**
-     * @var \Closure|class-string<\Illuminate\Http\Resources\Json\JsonResource>|null
+     * @var Closure|class-string<JsonResource>|null
      */
     protected static Closure|string|null $mapOrResource = null;
 

@@ -5,7 +5,7 @@ use Laraveltoolkit\Facades\Sitemap;
 use Workbench\App\Models\User;
 
 it('can add group', function () {
-    /** @var \Illuminate\Support\Collection $items */
+    /** @var Collection $items */
     $items = (new ReflectionClass(Sitemap::getFacadeRoot()::class))
         ->getProperty('items')
         ->getValue(Sitemap::getFacadeRoot());
@@ -13,13 +13,13 @@ it('can add group', function () {
     expect($items)
         ->toHaveCount(0)
         ->and(Sitemap::addIndex('abc')->addIndex('abc')->addIndex('abc2'))
-        ->toBeInstanceOf(\Laraveltoolkit\Sitemap\Sitemap::class)
+        ->toBeInstanceOf(Laraveltoolkit\Sitemap\Sitemap::class)
         ->and($items)
         ->toHaveCount(2);
 });
 
 it('can add url', function () {
-    /** @var \Illuminate\Support\Collection $items */
+    /** @var Collection $items */
     $items = (new ReflectionClass(Sitemap::getFacadeRoot()::class))
         ->getProperty('items')
         ->getValue(Sitemap::getFacadeRoot());
@@ -27,13 +27,13 @@ it('can add url', function () {
     expect($items)
         ->toHaveCount(0)
         ->and(Sitemap::addUrl('google.com.br')->addUrl('google.com.br')->addUrl('cade.com.br'))
-        ->toBeInstanceOf(\Laraveltoolkit\Sitemap\Sitemap::class)
+        ->toBeInstanceOf(Laraveltoolkit\Sitemap\Sitemap::class)
         ->and($items)
         ->toHaveCount(2);
 });
 
 it('can from query', function () {
-    /** @var \Illuminate\Support\Collection $closureRepositories */
+    /** @var Collection $closureRepositories */
     $closureRepositories = (new ReflectionClass(Sitemap::getFacadeRoot()::class))
         ->getProperty('closureRepositories')
         ->getValue(Sitemap::getFacadeRoot());
@@ -41,13 +41,13 @@ it('can from query', function () {
     expect($closureRepositories)
         ->toHaveCount(0)
         ->and(Sitemap::fromQuery(User::query(), fn () => Sitemap::addUrl('foo.com')))
-        ->toBeInstanceOf(\Laraveltoolkit\Sitemap\Sitemap::class)
+        ->toBeInstanceOf(Laraveltoolkit\Sitemap\Sitemap::class)
         ->and($closureRepositories)
         ->toHaveCount(1);
 });
 
 it('can from collection', function () {
-    /** @var \Illuminate\Support\Collection $closureRepositories */
+    /** @var Collection $closureRepositories */
     $closureRepositories = (new ReflectionClass(Sitemap::getFacadeRoot()::class))
         ->getProperty('closureRepositories')
         ->getValue(Sitemap::getFacadeRoot());
@@ -55,7 +55,7 @@ it('can from collection', function () {
     expect($closureRepositories)
         ->toHaveCount(0)
         ->and(Sitemap::fromCollection(collect([1, 2, 3]), fn () => Sitemap::addUrl('foo.com')))
-        ->toBeInstanceOf(\Laraveltoolkit\Sitemap\Sitemap::class)
+        ->toBeInstanceOf(Laraveltoolkit\Sitemap\Sitemap::class)
         ->and($closureRepositories)
         ->toHaveCount(1);
 });
@@ -64,7 +64,7 @@ it('test that combine index and url in same sitemap will fail', function () {
     $property = (new ReflectionClass(Sitemap::getFacadeRoot()::class))
         ->getProperty('items');
     expect(Sitemap::addIndex('foo'))
-        ->toBeInstanceOf(\Laraveltoolkit\Sitemap\Sitemap::class)
+        ->toBeInstanceOf(Laraveltoolkit\Sitemap\Sitemap::class)
         ->and(fn () => Sitemap::addUrl('foo.com'))
         ->toThrow('You cannot combine indexes and url in same sitemap.')
         ->and(fn () => Sitemap::fromCollection(collect(), fn () => Sitemap::addUrl('foo.com')))
@@ -74,14 +74,14 @@ it('test that combine index and url in same sitemap will fail', function () {
 
     $property->setValue(Sitemap::getFacadeRoot(), collect());
     expect(Sitemap::addUrl('https://google.com.br'))
-        ->toBeInstanceOf(\Laraveltoolkit\Sitemap\Sitemap::class)
+        ->toBeInstanceOf(Laraveltoolkit\Sitemap\Sitemap::class)
         ->and(fn () => Sitemap::addIndex('foo'))
         ->toThrow('You cannot combine indexes and url in same sitemap.');
 
 });
 
 it('can registry domain items', function () {
-    /** @var \Illuminate\Support\Collection $items */
+    /** @var Collection $items */
     $domains = (new ReflectionClass(Sitemap::getFacadeRoot()::class))
         ->getProperty('domains')
         ->getValue(Sitemap::getFacadeRoot());
@@ -110,7 +110,7 @@ it('can\'t add domain inside domain', function () {
 });
 
 it('can registry index items', function () {
-    /** @var \Illuminate\Support\Collection $indexes */
+    /** @var Collection $indexes */
     $indexes = (new ReflectionClass(Sitemap::getFacadeRoot()::class))
         ->getProperty('indexes')
         ->getValue(Sitemap::getFacadeRoot());

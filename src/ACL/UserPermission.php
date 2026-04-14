@@ -5,6 +5,7 @@ namespace Laraveltoolkit\ACL;
 use Closure;
 use Illuminate\Database\Eloquent\Casts\AsEnumCollection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Laraveltoolkit\Facades\ACL;
 use StringBackedEnum;
@@ -12,7 +13,7 @@ use StringBackedEnum;
 /**
  * @property int $id
  * @property Collection<string, \UnitEnum> $roles
- * @property \Illuminate\Support\Carbon $updated_at
+ * @property Carbon $updated_at
  *
  * @method Policy __get(string $name)
  */
@@ -23,7 +24,7 @@ abstract class UserPermission extends Model
     public const CREATED_AT = null;
 
     /**
-     * @var \Illuminate\Support\Collection<string, \Laraveltoolkit\ACL\Policy>
+     * @var Collection<string, Policy>
      */
     protected Collection $policies;
 
@@ -51,7 +52,7 @@ abstract class UserPermission extends Model
     abstract protected function declarePoliciesAndRoles(): void;
 
     /**
-     * @return \Illuminate\Support\Collection<string, \Laraveltoolkit\ACL\Policy>
+     * @return Collection<string, Policy>
      */
     public function getPolicies(?Closure $filter = null): Collection
     {

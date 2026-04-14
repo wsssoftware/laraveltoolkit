@@ -5,6 +5,7 @@ namespace Laraveltoolkit\SEO;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
+use Laraveltoolkit\Facades\SEO;
 
 class SEOComponent extends Component
 {
@@ -13,6 +14,6 @@ class SEOComponent extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('laraveltoolkit::seo', ['payload' => \Laraveltoolkit\Facades\SEO::payload()]);
+        return view('laraveltoolkit::seo', ['payload' => SEO::payload()]);
     }
 }

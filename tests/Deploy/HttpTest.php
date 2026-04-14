@@ -1,5 +1,6 @@
 <?php
 
+use Inertia\Response;
 use Laraveltoolkit\Deploy\MaintenanceController;
 use Laraveltoolkit\Deploy\PreventRequestsDuringMaintenance;
 
@@ -27,5 +28,5 @@ it('can render maintenance', function () {
     $controller = new MaintenanceController;
 
     expect($controller(request()))
-        ->toBeInstanceOf(\Inertia\Response::class);
+        ->toBeInstanceOf(Response::class);
 });

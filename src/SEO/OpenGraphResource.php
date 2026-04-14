@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @property \Laraveltoolkit\SEO\OpenGraph $resource
+ * @property OpenGraph $resource
  */
 class OpenGraphResource extends JsonResource
 {

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Laraveltoolkit\Support\AsExtendedFluent;
 use Laraveltoolkit\Support\ExtendedFluent;
 use Laraveltoolkit\Tests\Model\User;
@@ -10,9 +11,9 @@ use Laraveltoolkit\Tests\Support\TestEnum;
 it('test extended fluent', function () {
     $fluent = new class extends ExtendedFluent
     {
-        protected function fullName(): \Illuminate\Database\Eloquent\Casts\Attribute
+        protected function fullName(): Attribute
         {
-            return \Illuminate\Database\Eloquent\Casts\Attribute::make(
+            return Attribute::make(
                 get: fn ($value) => $this->name.' '.$this->last_name,
                 set: function ($value) {
                     $this->name = explode(' ', $value)[0];
@@ -21,9 +22,9 @@ it('test extended fluent', function () {
             );
         }
 
-        protected function enumValue(): \Illuminate\Database\Eloquent\Casts\Attribute
+        protected function enumValue(): Attribute
         {
-            return \Illuminate\Database\Eloquent\Casts\Attribute::make(
+            return Attribute::make(
                 get: fn ($value) => TestEnum::from($value),
             );
         }

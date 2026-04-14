@@ -5,6 +5,7 @@ namespace Laraveltoolkit\StoredAssets\Jobs;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Laraveltoolkit\Facades\StoredAssets;
 use Laraveltoolkit\Support\HasTimeoutHandler;
@@ -29,7 +30,7 @@ class TrashBinCleaner implements ShouldBeUnique, ShouldQueue
     {
         $this->startTimeoutHandler();
         $disk = $this->disk($this->disk);
-        /** @var \Illuminate\Support\Collection $directories */
+        /** @var Collection $directories */
         $directories = collect($disk->directories(StoredAssets::trashBinPath()))
             ->map(fn (string $path) => str($path)->trim('/')->afterLast('/')->toString())
             ->map(fn (string $folder) => [

@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\File;
 use Illuminate\Http\UploadedFile;
 use Laraveltoolkit\Facades\StoredAssets;
 use Laraveltoolkit\StoredAssets\Assets;
@@ -31,7 +32,7 @@ it('test parse method', function () {
         ->toBeInstanceOf(Recipe::class)
         ->and(ProductImageRecipe::parse($model, 'image', $uploadedFile->getPathname()))
         ->toBeInstanceOf(Recipe::class)
-        ->and(ProductImageRecipe::parse($model, 'image', new \Illuminate\Http\File($uploadedFile->getPathname())))
+        ->and(ProductImageRecipe::parse($model, 'image', new File($uploadedFile->getPathname())))
         ->toBeInstanceOf(Recipe::class)
         ->and(ProductImageRecipe::parse($model, 'image', $recipe))
         ->toEqual($recipe)

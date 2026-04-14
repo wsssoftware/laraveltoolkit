@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @property \Laraveltoolkit\SEO\Payload $resource
+ * @property Payload $resource
  */
 class SEOResource extends JsonResource
 {

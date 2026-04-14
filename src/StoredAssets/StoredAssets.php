@@ -76,7 +76,7 @@ class StoredAssets
     }
 
     /**
-     * @return class-string<\Laraveltoolkit\StoredAssets\StoredAssetModel>
+     * @return class-string<StoredAssetModel>
      */
     public function modelFQN(): string
     {
