@@ -21,7 +21,7 @@ jobs:
       fail-fast: true
       matrix:
         os: [ ubuntu-latest ]
-        php: [ 8.4 ]
+        php: [ 8.5 ]
         laravel: [ ^13.0, ^12.25, 11.* ]
         stability: [ prefer-lowest, prefer-stable ]
         include:
@@ -73,7 +73,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.4'
+          php-version: '8.5'
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
           coverage: "pcov"
 
@@ -84,7 +84,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer require "laravel/framework:12.*" "orchestra/testbench:10.*" "nesbot/carbon:^3.0" --no-interaction --no-update
+          composer require "laravel/framework:13.*" "orchestra/testbench:11.*" "nesbot/carbon:^3.0" --no-interaction --no-update
           composer update --prefer-stable --prefer-dist --no-interaction
 
       - name: List Installed Dependencies
