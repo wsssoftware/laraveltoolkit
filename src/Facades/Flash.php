@@ -8,8 +8,7 @@ use Laraveltoolkit\Flash\Message;
 use Laraveltoolkit\Flash\Severity;
 
 /**
- * @method static void clear()
- * @method static Collection<int, Message> pullMessages()
+ * @method static Collection<string, Message> getFlashed()
  * @method static Message success(string $detail, string $summary = null)
  * @method static Message info(string $detail, string $summary = null)
  * @method static Message warn(string $detail, string $summary = null)

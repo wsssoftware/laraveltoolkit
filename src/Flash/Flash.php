@@ -2,44 +2,27 @@
 
 namespace Laraveltoolkit\Flash;
 
-use Illuminate\Session\SessionManager;
 use Illuminate\Support\Collection;
+use Inertia\Inertia;
 
 class Flash
 {
     use FlashTests;
 
-    public const string SESSION_KEY = 'laraveltoolkit.flashes';
-
-    protected Collection $messages;
-
-    protected SessionManager $session;
-
-    public function __construct()
-    {
-        $this->messages = collect();
-        $this->session = app(SessionManager::class);
-    }
-
     protected function add(Message $message): Message
     {
-        $this->messages->push($message);
-        $this->session->push(self::SESSION_KEY, $message);
+        Inertia::flash($message->id, FlashResource::make($message));
 
         return $message;
     }
 
-    public function clear(): void
+    /**
+     * @return Collection<string, Message>
+     */
+    public function getFlashed(): Collection
     {
-        $this->session->forget(self::SESSION_KEY);
-        $this->messages = collect();
-    }
-
-    public function pullMessages(): Collection
-    {
-        return collect($this->session->pull(self::SESSION_KEY, []))
-            ->ensure(Message::class)
-            ->sortBy('createdAt');
+        return collect(Inertia::getFlashed())
+            ->map(fn (FlashResource $resource) => $resource->resource);
     }
 
     public function success(string $detail, ?string $summary = null): Message

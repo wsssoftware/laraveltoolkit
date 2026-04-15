@@ -12,29 +12,20 @@ it('can send flash', function () {
     Flash::error('ok');
     Flash::secondary('ok');
     Flash::contrast('ok');
-
-    expect(Flash::pullMessages())
+    expect(Flash::getFlashed())
         ->toHaveCount(6)
         ->toBeInstanceOf(Collection::class)
         ->each
         ->toBeInstanceOf(Message::class);
 });
 
-it('can clear messages', function () {
-    Flash::error('ok');
-    Flash::secondary('ok');
-    Flash::contrast('ok');
-    Flash::clear();
-    expect(Flash::pullMessages())
-        ->toBeEmpty();
-});
-
 it('test defaults', function () {
+
     config()->set('laraveltoolkit.flash.defaults.closable', true);
     config()->set('laraveltoolkit.flash.defaults.life', 1234);
     config()->set('laraveltoolkit.flash.defaults.group', 'abc');
     Flash::error('ok');
-    $message = Flash::pullMessages()->first();
+    $message = Flash::getFlashed()->first();
     expect($message->closable)
         ->toBeTrue()
         ->and($message->life)
@@ -44,35 +35,39 @@ it('test defaults', function () {
 });
 
 it('can send messages with options', function () {
+
     Flash::error('ok')->withGroup('foo_bar');
-    $messages = Flash::pullMessages();
+    $messages = Flash::getFlashed();
     expect($messages->first()->group)
         ->toEqual('foo_bar');
+
+    $this->flushSession();
     Flash::error('ok')->closable();
     Flash::error('ok')->unclosable();
-    $messages = Flash::pullMessages();
+    $messages = Flash::getFlashed();
     expect($messages->first()->closable)
         ->toBeTrue()
         ->and($messages->last()->closable)
         ->toBeFalse();
+
+    $this->flushSession();
     Flash::error('ok')->withLife(4000);
-    $messages = Flash::pullMessages();
+    $messages = Flash::getFlashed();
     expect($messages->first()->life)
         ->toEqual(4000);
 });
 
 it('test test assert flashed', function () {
-    Flash::clear();
     expect(fn () => Flash::assertFlashed())
         ->toThrow('Was expected a flash of "any" severity but was not found');
 
-    Flash::clear();
+    $this->flushSession();
     Flash::success('ok');
     expect(fn () => Flash::assertFlashed())
         ->not
         ->toThrow('Was expected a flash of "any" severity but was not found');
 
-    Flash::clear();
+    $this->flushSession();
     Flash::success('ok');
     expect(fn () => Flash::assertFlashed(Severity::INFO))
         ->toThrow('Was expected a flash of "info" severity but was not found')
@@ -80,7 +75,7 @@ it('test test assert flashed', function () {
         ->not
         ->toThrow('Was expected a flash of "success" severity but was not found');
 
-    Flash::clear();
+    $this->flushSession();
     Flash::success('ok');
     expect(fn () => Flash::assertFlashed(countOrMessage: 'foo'))
         ->toThrow('Was expected a flash of "any" severity with detail of "foo" but was not found')
@@ -88,7 +83,7 @@ it('test test assert flashed', function () {
         ->not
         ->toThrow('Was expected a flash of "any" severity but was not found');
 
-    Flash::clear();
+    $this->flushSession();
     Flash::success('ok');
     Flash::success('ok');
     expect(fn () => Flash::assertFlashed(countOrMessage: 3))
@@ -98,18 +93,18 @@ it('test test assert flashed', function () {
         ->toThrow('Was expected 2 flashes from "any" severity but was found 2');
 });
 
-it('test test assert not flashed', function () {
-    Flash::clear();
+it('test assert not flashed', function () {
+    $this->flushSession();
     expect(fn () => Flash::assertNotFlashed())
         ->not
         ->toThrow('Was expected none flashes of "any" severity but was found 1');
 
-    Flash::clear();
+    $this->flushSession();
     Flash::success('ok');
     expect(fn () => Flash::assertNotFlashed())
         ->toThrow('Was expected none flashes of "any" severity but was found 1');
 
-    Flash::clear();
+    $this->flushSession();
     Flash::success('ok');
     Flash::success('ok');
     Flash::success('ok');

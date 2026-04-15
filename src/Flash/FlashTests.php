@@ -8,7 +8,7 @@ trait FlashTests
 {
     public function assertFlashed(?Severity $severity = null, null|int|string $countOrMessage = null): void
     {
-        $messages = $this->messages;
+        $messages = $this->getFlashed();
         if ($severity) {
             $messages = $messages->filter(fn (Message $message) => $message->severity === $severity);
         }
@@ -40,7 +40,7 @@ trait FlashTests
 
     public function assertNotFlashed(?Severity $severity = null): void
     {
-        $messages = $this->messages;
+        $messages = $this->getFlashed();
         if ($severity) {
             $messages = $messages->filter(fn (Message $message) => $message->severity === $severity);
         }
