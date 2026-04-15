@@ -12,6 +12,14 @@ This is where your description should go. Limit it to a paragraph or two. Consid
 > Some features from this package work in association with the
 > package [vuetoolkit](https://github.com/wsssoftware/vuetoolkit). For mor information read it's related docs.
 
+## Compatibility
+
+| Package Version | Vuetoolkit Version | Laravel Version | Inertia Version |
+|-----------------|--------------------|-----------------|-----------------|
+| 1.x             | ❌                  | `11.x` `12.x`   | `1.x` `2.x`     |
+| 2.x             | `1.x`              | `11.x` `12.x`   | `2.x`           |           
+| 3.x             | `2.x`              | `12.x` `13.x`   | `3.x`           |           
+
 ## Installation
 
 You can install the package via composer:
