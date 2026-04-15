@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Collection;
 use Laraveltoolkit\Facades\Flash;
+use Laraveltoolkit\Flash\FlashResource;
 use Laraveltoolkit\Flash\Message;
 use Laraveltoolkit\Flash\Severity;
 
@@ -57,7 +58,37 @@ it('can send messages with options', function () {
         ->toEqual(4000);
 });
 
-it('test test assert flashed', function () {
+it('test resource', function () {
+    $payload = FlashResource::make(
+        Message::create(Severity::CONTRAST, 'abc', 'foo')
+    )->resolve();
+
+    expect($payload)
+        ->toHaveKey('id')
+        ->toHaveKey('severity')
+        ->toHaveKey('summary')
+        ->toHaveKey('detail')
+        ->toHaveKey('group')
+        ->not
+        ->toHaveKey('life')
+        ->not
+        ->toHaveKey('closable');
+
+    $payload = FlashResource::make(
+        Message::create(Severity::CONTRAST, 'abc', 'foo')->closable()->withLife(2000)
+    )->resolve();
+
+    expect($payload)
+        ->toHaveKey('id')
+        ->toHaveKey('severity')
+        ->toHaveKey('summary')
+        ->toHaveKey('detail')
+        ->toHaveKey('group')
+        ->toHaveKey('life')
+        ->toHaveKey('closable');
+});
+
+it('test assert flashed', function () {
     expect(fn () => Flash::assertFlashed())
         ->toThrow('Was expected a flash of "any" severity but was not found');
 
