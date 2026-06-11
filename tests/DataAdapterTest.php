@@ -127,6 +127,31 @@ it('test global filter', function () {
         ->toBe('foo@bar.com');
 });
 
+it('test global filter is case insensitive', function () {
+    User::factory()->count(100)->create();
+    Route::getAndPost('/', function () {
+        return response()->json([
+            'users' => User::query()->primevueData(),
+        ]);
+    });
+
+    $response = $this->post('/', [
+        'page' => 1,
+        'page-options' => [
+            'global_filter_name' => 'global',
+            'rows' => 15,
+            'filters' => ['global' => ['value' => 'foo bar', 'matchMode' => 'contains']],
+        ],
+    ]);
+
+    $response->assertSuccessful();
+
+    expect($response->json('users.data'))
+        ->toHaveCount(1)
+        ->and($response->json('users.data.0.name'))
+        ->toBe('Foo Bar');
+});
+
 it('test global filter with invalid matchMode', function () {
     User::factory()->count(100)->create();
     Route::getAndPost('/', function () {

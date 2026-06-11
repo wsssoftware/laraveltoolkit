@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('user_permissions', function (Blueprint $table) {
             $table->foreignId('id')
-                ->unique()
                 ->primary()
                 ->constrained('users')
                 ->cascadeOnUpdate()

@@ -17,6 +17,21 @@ enum MatchMode: string
 
     public function apply(QueryBuilder $builder, string $column, mixed $value, string $boolean): void
     {
+        if ($this->usesTextSearch()) {
+            $builder->whereRaw(
+                sprintf(
+                    'LOWER(CAST(%s AS %s)) %s ?',
+                    $builder->getGrammar()->wrap($column),
+                    $this->stringCastType($builder),
+                    $this->operator($value),
+                ),
+                [mb_strtolower($this->value($value))],
+                $boolean
+            );
+
+            return;
+        }
+
         $builder->where($column, $this->operator($value), $this->value($value), $boolean);
     }
 
@@ -27,9 +42,27 @@ enum MatchMode: string
             ->toArray();
         $builder->whereNested(function (QueryBuilder $query) use ($columns, $value) {
             foreach ($columns as $column) {
-                $query->where($column, $this->operator($value), $this->value($value), 'or');
+                $this->apply($query, $column, $value, 'or');
             }
         });
+    }
+
+    protected function usesTextSearch(): bool
+    {
+        return in_array($this, [
+            self::STARTS_WITH,
+            self::CONTAINS,
+            self::NOT_CONTAINS,
+            self::ENDS_WITH,
+        ], true);
+    }
+
+    protected function stringCastType(QueryBuilder $builder): string
+    {
+        return match ($builder->getConnection()->getDriverName()) {
+            'mariadb', 'mysql' => 'CHAR',
+            default => 'TEXT',
+        };
     }
 
     protected function operator(mixed $value): string
