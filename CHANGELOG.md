@@ -2,6 +2,16 @@
 
 All notable changes to `laraveltoolkit` will be documented in this file.
 
+## 3.1.0 - 2026-06-11
+
+### What's Changed
+
+* Bump dependabot/fetch-metadata from 3.0.0 to 3.1.0 by @dependabot[bot] in https://github.com/wsssoftware/laraveltoolkit/pull/57
+* Bump codecov/codecov-action from 6.0.0 to 6.0.1 by @dependabot[bot] in https://github.com/wsssoftware/laraveltoolkit/pull/58
+* Bump codecov/codecov-action from 6.0.1 to 7.0.0 by @dependabot[bot] in https://github.com/wsssoftware/laraveltoolkit/pull/59
+
+**Full Changelog**: https://github.com/wsssoftware/laraveltoolkit/compare/3.0.0...3.1.0
+
 ## 3.0.0 - 2026-04-15
 
 ### What's Changed
