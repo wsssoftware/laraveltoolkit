@@ -21,6 +21,47 @@ it('test locale sort by', function () {
         ->toBe('Úrsula');
 });
 
+it('test collator sort', function () {
+    $collection = collect(['João', 'Allan', 'Álan', 'Uai', 'Úrsula']);
+
+    expect($collection->collatorSort()->values()->all())
+        ->toBe(['Álan', 'Allan', 'João', 'Uai', 'Úrsula'])
+        ->and($collection->collatorSort(direction: SORT_DESC)->values()->all())
+        ->toBe(['Úrsula', 'Uai', 'João', 'Allan', 'Álan']);
+});
+
+it('test collator sort with numeric values', function () {
+    $collection = collect(['10', 2, 1]);
+
+    expect($collection->collatorSort(SORT_NUMERIC)->values()->all())
+        ->toBe([1, 2, '10'])
+        ->and($collection->collatorSort(SORT_NUMERIC, SORT_DESC)->values()->all())
+        ->toBe(['10', 2, 1]);
+});
+
+it('test collator sort with natural values', function () {
+    $collection = collect(['item 10', 'item 1', 'item 2']);
+
+    expect($collection->collatorSort(SORT_NATURAL)->values()->all())
+        ->toBe(['item 1', 'item 2', 'item 10'])
+        ->and($collection->collatorSort(SORT_NATURAL, SORT_DESC)->values()->all())
+        ->toBe(['item 10', 'item 2', 'item 1']);
+});
+
+it('test collator sort with case insensitive values', function () {
+    $collection = collect(['casa', 'Casa', 'bola']);
+
+    expect($collection->collatorSort(SORT_STRING | SORT_FLAG_CASE)->values()->all())
+        ->toBe(['bola', 'casa', 'Casa']);
+});
+
+it('test collator sort with invalid arguments', function () {
+    expect(fn () => collect(['a', 'b'])->collatorSort(SORT_FLAG_CASE))
+        ->toThrow(RuntimeException::class, 'Invalid options for collatorSort method')
+        ->and(fn () => collect(['a', 'b'])->collatorSort(direction: 99))
+        ->toThrow(RuntimeException::class, 'Invalid direction for collatorSort method');
+});
+
 it('test value label', function () {
     $collection = collect([
         new FakeModel(['id' => 1, 'name' => 'João']),
