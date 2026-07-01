@@ -2,6 +2,11 @@
 
 All notable changes to `laraveltoolkit` will be documented in this file.
 
+## 3.2.0 - 2026-07-01
+
+Adds locale-aware collection sorting using Collator, including support for natural, numeric, descending, and case-insensitive sorting.
+Also expands HasArrayableEnum with optional only/except filters and label-based sorting, while preserving enum declaration order when no sort option is provided. Updates the ArrayableEnum contract and adds tests for the new behavior.
+
 ## 3.1.0 - 2026-06-11
 
 ### What's Changed
