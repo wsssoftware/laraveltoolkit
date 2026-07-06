@@ -67,12 +67,12 @@ it('can sort enum array by label', function () {
 });
 
 it('can filter and sort value label collection', function () {
-    expect(FakeSortableEnum::toValueLabel(only: ['second', 'first'])->all())
+    expect(FakeSortableEnum::toValueLabel(sortFlags: null, only: ['second', 'first'])->all())
         ->toBe([
             ['value' => 'second', 'label' => 'Beta'],
             ['value' => 'first', 'label' => 'Alpha'],
         ])
-        ->and(FakeSortableEnum::toValueLabel(sortFlags: SORT_REGULAR, only: ['second', 'first'])->all())
+        ->and(FakeSortableEnum::toValueLabel(only: ['second', 'first'])->all())
         ->toBe([
             ['value' => 'first', 'label' => 'Alpha'],
             ['value' => 'second', 'label' => 'Beta'],
