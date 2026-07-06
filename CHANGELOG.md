@@ -2,6 +2,14 @@
 
 All notable changes to `laraveltoolkit` will be documented in this file.
 
+## 3.2.1 - 2026-07-06
+
+### What's Changed
+
+* Bump actions/checkout from 6 to 7 by @dependabot[bot] in https://github.com/wsssoftware/laraveltoolkit/pull/60
+
+**Full Changelog**: https://github.com/wsssoftware/laraveltoolkit/compare/3.2.0...3.2.1
+
 ## 3.2.0 - 2026-07-01
 
 Adds locale-aware collection sorting using Collator, including support for natural, numeric, descending, and case-insensitive sorting.
