@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 trait HasArrayableEnum
 {
     public static function toEnumArray(
-        ?int $sortFlags = null,
+        ?int $sortFlags = SORT_REGULAR,
         int $direction = SORT_ASC,
         ?array $only = null,
         ?array $except = null
@@ -26,7 +26,7 @@ trait HasArrayableEnum
     public static function toValueLabel(
         string $labelKey = 'label',
         string $valueKey = 'value',
-        ?int $sortFlags = null,
+        ?int $sortFlags = SORT_REGULAR,
         int $direction = SORT_ASC,
         ?array $only = null,
         ?array $except = null
