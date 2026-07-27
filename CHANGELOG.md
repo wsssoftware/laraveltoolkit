@@ -2,6 +2,10 @@
 
 All notable changes to `laraveltoolkit` will be documented in this file.
 
+## 3.3.0 - 2026-07-27
+
+**Full Changelog**: https://github.com/wsssoftware/laraveltoolkit/compare/3.2.1...3.3.0
+
 ## 3.2.1 - 2026-07-06
 
 ### What's Changed
