@@ -3,6 +3,7 @@
 namespace Laraveltoolkit\Enum;
 
 use Exception;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
 
 trait HasArrayableEnum
@@ -33,6 +34,34 @@ trait HasArrayableEnum
     ): Collection {
         return collect(self::toEnumArray($sortFlags, $direction, $only, $except))
             ->toValueLabelFromArray($labelKey, $valueKey);
+    }
+
+    public static function toEnumArrayable(
+        string $sortKey = 'label',
+        ?int $sortFlags = SORT_REGULAR,
+        int $direction = SORT_ASC,
+        ?array $only = null,
+        ?array $except = null
+    ): array {
+        throw_if(! enum_exists(self::class), Exception::class, self::class.' is not a valid enum');
+
+        return collect(self::cases())
+            ->mapWithKeys(function ($value) {
+                throw_if(! $value instanceof Arrayable, Exception::class,
+                    self::class.' must implement '.Arrayable::class);
+
+                return [$value->value => $value->toArray()];
+            })
+            ->when(! empty($only), fn (Collection $c) => $c->only($only))
+            ->when(! empty($except), fn (Collection $c) => $c->except($except))
+            ->when($sortFlags !== null, function (Collection $c) use ($sortKey, $sortFlags, $direction) {
+                return $c
+                    ->map(fn (array $payload) => $payload[$sortKey])
+                    ->collatorSort($sortFlags, $direction)
+                    ->mapWithKeys(fn (mixed $value, mixed $key) => [$key => $c->get($key)]);
+            })
+            ->values()
+            ->toArray();
     }
 
     public function label(): string

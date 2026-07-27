@@ -22,5 +22,13 @@ interface ArrayableEnum
         ?array $except = null
     ): Collection;
 
+    public static function toEnumArrayable(
+        string $sortKey = 'label',
+        ?int $sortFlags = SORT_REGULAR,
+        int $direction = SORT_ASC,
+        ?array $only = null,
+        ?array $except = null
+    ): array;
+
     public function label(): string;
 }

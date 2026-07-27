@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Collection;
+use Laraveltoolkit\Tests\Enum\FakeArrayableEnum;
 use Laraveltoolkit\Tests\Enum\FakeInvalidEnum;
 use Laraveltoolkit\Tests\Enum\FakeSortableEnum;
 use Laraveltoolkit\Tests\Enum\FakeValidEnum;
@@ -30,6 +31,28 @@ it('can get value label collection', function () {
         ->toHaveCount(count(FakeValidEnum::cases()))
         ->each
         ->toHaveKeys(['bar', 'foo']);
+});
+
+it('can convert an arrayable enum into an array', function () {
+    expect(FakeArrayableEnum::toEnumArrayable())
+        ->toBeArray()
+        ->toHaveCount(count(FakeArrayableEnum::cases()))
+        ->toBe([
+            ['label' => 'Alpha', 'name' => 'Second'],
+            ['label' => 'Mike', 'name' => 'Third'],
+            ['label' => 'Zulu', 'name' => 'First'],
+        ])
+        ->and(FakeArrayableEnum::toEnumArrayable(sortFlags: null))
+        ->toBe([
+            ['label' => 'Zulu', 'name' => 'First'],
+            ['label' => 'Alpha', 'name' => 'Second'],
+            ['label' => 'Mike', 'name' => 'Third'],
+        ]);
+});
+
+it('requires an arrayable enum to get its array payload', function () {
+    expect(fn () => FakeValidEnum::toEnumArrayable())
+        ->toThrow(FakeValidEnum::class.' must implement Illuminate\Contracts\Support\Arrayable');
 });
 
 it('can filter enum array by value', function () {
@@ -76,5 +99,18 @@ it('can filter and sort value label collection', function () {
         ->toBe([
             ['value' => 'first', 'label' => 'Alpha'],
             ['value' => 'second', 'label' => 'Beta'],
+        ]);
+});
+
+it('can filter and sort an arrayable enum by a payload key', function () {
+    expect(FakeArrayableEnum::toEnumArrayable(sortFlags: SORT_REGULAR, only: ['third', 'first']))
+        ->toBe([
+            ['label' => 'Mike', 'name' => 'Third'],
+            ['label' => 'Zulu', 'name' => 'First'],
+        ])
+        ->and(FakeArrayableEnum::toEnumArrayable('name', SORT_REGULAR, SORT_DESC, except: ['second']))
+        ->toBe([
+            ['label' => 'Mike', 'name' => 'Third'],
+            ['label' => 'Zulu', 'name' => 'First'],
         ]);
 });
