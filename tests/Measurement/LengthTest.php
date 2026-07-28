@@ -47,7 +47,24 @@ it('formats a length using the maximum precision behavior from Laravel', functio
     $length = length(1234.567, LengthUnit::CENTIMETER);
 
     expect($length->format(maxPrecision: 2))->toBe('1.234,57 cm')
-        ->and($length->format(precision: 4, maxPrecision: 2))->toBe('1.234,57 cm');
+        ->and($length->format(precision: 4, maxPrecision: 2))->toBe('1.234,57 cm')
+        ->and($length->formatWithoutUnit(maxPrecision: 2))->toBe('1.234,57')
+        ->and($length->formatWithoutUnit(precision: 2, locale: 'en'))->toBe('1,234.57');
+});
+
+it('returns explicitly typed and rounded display values', function () {
+    $length = length(12.55, LengthUnit::CENTIMETER);
+
+    expect($length->toFloat())->toBe(12.55)
+        ->and($length->toInteger())->toBe(13)
+        ->and($length->toInteger(RoundingMode::TowardsZero))->toBe(12)
+        ->and($length->round())->toBe(13.0)
+        ->and($length->round(1, RoundingMode::HalfEven))->toBe(12.6)
+        ->and(length(PHP_INT_MAX, 'm')->toInteger())->toBe(PHP_INT_MAX)
+        ->and(fn () => length(PHP_INT_MAX, 'm')->add(1)->toInteger())
+        ->toThrow(OverflowException::class, 'exceeds the native integer range')
+        ->and(fn () => length(PHP_INT_MIN, 'm')->sub(1)->toInteger())
+        ->toThrow(OverflowException::class, 'exceeds the native integer range');
 });
 
 it('resolves units from names, values, and terms', function () {

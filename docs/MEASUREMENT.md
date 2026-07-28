@@ -200,7 +200,15 @@ $length->sub(25)->value();               // -24.0; scalar values use the current
 $length->mul(2)->value();                // 2.0
 $length->div(4)->value();                // 0.25
 $length->to(LengthUnit::CENTIMETER)->value(); // 100.0
+$length->toFloat();                      // 1.0
+$length->toInteger();                    // 1
+$length->round(2);                       // 1.0
 ```
+
+`toFloat()` returns the displayed value explicitly as a `float`. `toInteger()` rounds the displayed value to an
+integer using `RoundingMode::HalfAwayFromZero` by default and throws an `OverflowException` when the result is outside
+PHP's native integer range. `round()` returns the displayed value as a `float` rounded to the requested precision.
+Both rounding methods accept a different `RoundingMode` as their last argument.
 
 Use `referenceValue()` to inspect the dimension's canonical value. It returns an `int` for an integral value within
 PHP's native integer range, an exact decimal `string` for a larger integer, and a `float` for a fractional value.
@@ -221,11 +229,15 @@ $length->format(precision: 2);                  // 1.234,50 pol (pt_BR)
 $length->format(locale: 'en');                  // 1,234.5 in
 $length->format(null, null, false, 'en');       // 1,234.5 inches
 $length->format(locale: 'pt_BR', short: false); // 1.234,5 polegadas
+$length->formatWithoutUnit();                   // 1.234,5
+$length->formatWithoutUnit(locale: 'en');       // 1,234.5
 ```
 
 When `locale` is omitted, the current Laravel application locale formats both the number and its postfix.
 Abbreviated postfixes are never pluralized. Complete postfixes use the number after display precision is applied, so
 `length(1.4, 'm')->format(precision: 0, short: false)` returns `1 metro`.
+Use `formatWithoutUnit()` to apply the same localized precision rules without appending either the abbreviated or
+complete unit.
 
 ## Eloquent casting
 
