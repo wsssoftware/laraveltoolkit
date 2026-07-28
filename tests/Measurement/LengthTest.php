@@ -138,3 +138,18 @@ it('supports canonical values beyond the native integer range', function () {
         ->and(length(PHP_INT_MIN, 'nm')->div(-1)->referenceValue())
         ->toBe('9223372036854775808');
 });
+
+it('normalizes finite floats written in scientific notation', function () {
+    expect(length(1e20, 'nm')->referenceValueString())->toBe('100000000000000000000')
+        ->and(length(1e-20, 'nm')->referenceValueString())->toBe('0.00000000000000000001')
+        ->and(length(-1e-20, 'nm')->referenceValueString())->toBe('-0.00000000000000000001');
+});
+
+it('rejects invalid arithmetic operands', function () {
+    expect(fn () => length(1)->div(0))
+        ->toThrow(DivisionByZeroError::class, 'Division by zero')
+        ->and(fn () => new Length(INF, LengthUnit::METER))
+        ->toThrow(OverflowException::class, 'requires a finite numeric value')
+        ->and(fn () => temperature(1)->div(0))
+        ->toThrow(DivisionByZeroError::class, 'Division by zero');
+});

@@ -20,6 +20,8 @@ it('converts metric, atmospheric, and imperial pressures', function () {
     expect(pressure(1, 'bar')->to(PressureUnit::KILOPASCAL)->value())->toBe(100.0)
         ->and(pressure(1, 'atm')->to(PressureUnit::KILOPASCAL)->value())->toBe(101.325)
         ->and(pressure(1, 'psi')->to(PressureUnit::KILOPASCAL)->value())->toBe(6.894757293168)
+        ->and(pressure(1, 'torr')->to(PressureUnit::KILOPASCAL)->value())->toBe(0.133322368421)
+        ->and(pressure(1, 'mmHg')->to(PressureUnit::KILOPASCAL)->value())->toBe(0.133322387415)
         ->and(pressure(1, 'hPa')->equals(pressure(1, 'mbar')))->toBeTrue();
 });
 

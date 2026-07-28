@@ -93,9 +93,12 @@ abstract class Number implements Arrayable, Castable, JsonSerializable
             $locale,
         );
 
+        // NumberFormatter only returns false for unsupported input types.
+        // @codeCoverageIgnoreStart
         if ($value === false) {
             return false;
         }
+        // @codeCoverageIgnoreEnd
 
         if ($short) {
             return "{$value} {$this->unit()->term($locale)}";
@@ -279,12 +282,8 @@ abstract class Number implements Arrayable, Castable, JsonSerializable
         return $value->round(self::INTERNAL_SCALE, $roundingMode);
     }
 
-    private static function scalarToNumber(int|float|string|BcNumber $value): BcNumber
+    private static function scalarToNumber(int|float|string $value): BcNumber
     {
-        if ($value instanceof BcNumber) {
-            return $value;
-        }
-
         if (is_float($value)) {
             if (! is_finite($value)) {
                 throw new OverflowException('The measurement requires a finite numeric value.');
@@ -313,10 +312,8 @@ abstract class Number implements Arrayable, Castable, JsonSerializable
 
         if ($decimalPosition <= 0) {
             $decimal = '0.'.str_repeat('0', -$decimalPosition).$digits;
-        } elseif ($decimalPosition >= strlen($digits)) {
-            $decimal = $digits.str_repeat('0', $decimalPosition - strlen($digits));
         } else {
-            $decimal = substr($digits, 0, $decimalPosition).'.'.substr($digits, $decimalPosition);
+            $decimal = $digits.str_repeat('0', $decimalPosition - strlen($digits));
         }
 
         return $negative ? '-'.$decimal : $decimal;

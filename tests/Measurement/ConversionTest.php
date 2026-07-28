@@ -11,6 +11,16 @@ use Laraveltoolkit\Measurement\Enums\SpeedUnit;
 use Laraveltoolkit\Measurement\Enums\TemperatureUnit;
 use Laraveltoolkit\Measurement\Enums\VolumeUnit;
 use Laraveltoolkit\Measurement\Enums\WeightUnit;
+use Laraveltoolkit\Measurement\Models\Area;
+use Laraveltoolkit\Measurement\Models\Duration;
+use Laraveltoolkit\Measurement\Models\Energy;
+use Laraveltoolkit\Measurement\Models\Length;
+use Laraveltoolkit\Measurement\Models\Power;
+use Laraveltoolkit\Measurement\Models\Pressure;
+use Laraveltoolkit\Measurement\Models\Speed;
+use Laraveltoolkit\Measurement\Models\Temperature;
+use Laraveltoolkit\Measurement\Models\Volume;
+use Laraveltoolkit\Measurement\Models\Weight;
 
 it('keeps critical conversion anchors stable', function (
     string $dimension,
@@ -44,4 +54,24 @@ it('keeps critical conversion anchors stable', function (
     'atmosphere to kilopascals' => ['pressure', 1, 'atm', PressureUnit::KILOPASCAL, 101.325],
     'kilowatt-hour to megajoules' => ['energy', 1, 'kWh', EnergyUnit::MEGAJOULE, 3.6],
     'mechanical horsepower to watts' => ['power', 1, 'hp', PowerUnit::WATT, 745.699872],
+]);
+
+it('rejects a canonical value paired with an incompatible unit', function (
+    string $measurementClass,
+    Unit $unit,
+    string $message,
+): void {
+    expect(fn () => $measurementClass::fromReferenceValue(1, $unit))
+        ->toThrow(InvalidArgumentException::class, $message);
+})->with([
+    'length' => [Length::class, WeightUnit::GRAM, 'A length value requires a length unit.'],
+    'weight' => [Weight::class, LengthUnit::METER, 'A weight value requires a weight unit.'],
+    'volume' => [Volume::class, LengthUnit::METER, 'A volume value requires a volume unit.'],
+    'area' => [Area::class, LengthUnit::METER, 'An area value requires an area unit.'],
+    'temperature' => [Temperature::class, LengthUnit::METER, 'A temperature value requires a temperature unit.'],
+    'speed' => [Speed::class, LengthUnit::METER, 'A speed value requires a speed unit.'],
+    'duration' => [Duration::class, LengthUnit::METER, 'A duration value requires a duration unit.'],
+    'pressure' => [Pressure::class, LengthUnit::METER, 'A pressure value requires a pressure unit.'],
+    'energy' => [Energy::class, LengthUnit::METER, 'An energy value requires an energy unit.'],
+    'power' => [Power::class, LengthUnit::METER, 'A power value requires a power unit.'],
 ]);

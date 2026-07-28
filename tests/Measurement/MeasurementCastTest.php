@@ -103,6 +103,25 @@ it('makes every measurement model castable and supports explicit cast syntax', f
         ->and(MeasurementCast::of(Length::class))->toBe(MeasurementCast::class.':'.Length::class);
 });
 
+it('supports direct cast values and rejects invalid cast configuration', function (): void {
+    $model = new MeasurementRecord;
+    $cast = new MeasurementCast(Length::class);
+    $length = length(1);
+
+    expect($cast->get($model, 'length', null, []))->toBeNull()
+        ->and($cast->get($model, 'length', $length, []))->toBe($length)
+        ->and($cast->get($model, 'length', [
+            'reference_value' => '1000000000',
+            'unit' => 'meter',
+        ], [])->equals($length))->toBeTrue()
+        ->and(fn () => $cast->get($model, 'length', 42, []))
+        ->toThrow(UnexpectedValueException::class, 'must be a JSON string or an array')
+        ->and(fn () => $cast->get($model, 'length', '42', []))
+        ->toThrow(UnexpectedValueException::class, 'must contain a JSON object')
+        ->and(fn () => new MeasurementCast(stdClass::class))
+        ->toThrow(InvalidArgumentException::class, 'must extend');
+});
+
 it('uses the same cast for duration, pressure, energy, and power measurements', function (): void {
     $record = MeasurementRecord::query()->create([
         'duration' => new Duration(1000, DurationUnit::YEAR),
