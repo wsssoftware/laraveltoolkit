@@ -73,6 +73,10 @@ A bridge between FilePond and Laravel
 
 A minimalist implementation of DataTables and DataView on Laravel
 
+### [Measurement](docs/MEASUREMENT.md)
+
+Typed measurements with localized conversion and arbitrary-precision decimal arithmetic.
+
 ### [SEO](docs/SEO.md)
 
 Tools to help dev to handle with SEO features.
