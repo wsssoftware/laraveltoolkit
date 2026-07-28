@@ -2,6 +2,18 @@
 
 All notable changes to `laraveltoolkit` will be documented in this file.
 
+## 3.4.0 - 2026-07-28
+
+### What's Changed
+
+* Add arbitrary-precision measurement system by @allanmcarvalho in https://github.com/wsssoftware/laraveltoolkit/pull/61
+* Use Xdebug and improve measurement system coverage by @allanmcarvalho in https://github.com/wsssoftware/laraveltoolkit/pull/62
+* Upgrade test suite to Pest 5 by @allanmcarvalho in https://github.com/wsssoftware/laraveltoolkit/pull/63
+* docs: overhaul package documentation by @allanmcarvalho in https://github.com/wsssoftware/laraveltoolkit/pull/64
+* Fix flaky stored assets job test by @allanmcarvalho in https://github.com/wsssoftware/laraveltoolkit/pull/65
+
+**Full Changelog**: https://github.com/wsssoftware/laraveltoolkit/compare/3.3.0...3.4.0
+
 ## 3.3.0 - 2026-07-27
 
 **Full Changelog**: https://github.com/wsssoftware/laraveltoolkit/compare/3.2.1...3.3.0
