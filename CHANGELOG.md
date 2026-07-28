@@ -2,6 +2,14 @@
 
 All notable changes to `laraveltoolkit` will be documented in this file.
 
+## 3.6.0 - 2026-07-28
+
+### What's Changed
+
+* Add measurement comparison helpers by @allanmcarvalho in https://github.com/wsssoftware/laraveltoolkit/pull/67
+
+**Full Changelog**: https://github.com/wsssoftware/laraveltoolkit/compare/3.5.0...3.6.0
+
 ## 3.5.0 - 2026-07-28
 
 ### What's Changed
