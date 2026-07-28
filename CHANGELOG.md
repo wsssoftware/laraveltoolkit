@@ -2,6 +2,14 @@
 
 All notable changes to `laraveltoolkit` will be documented in this file.
 
+## 3.5.0 - 2026-07-28
+
+### What's Changed
+
+* Add measurement value conversion helpers by @allanmcarvalho in https://github.com/wsssoftware/laraveltoolkit/pull/66
+
+**Full Changelog**: https://github.com/wsssoftware/laraveltoolkit/compare/3.4.0...3.5.0
+
 ## 3.4.0 - 2026-07-28
 
 ### What's Changed
