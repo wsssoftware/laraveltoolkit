@@ -1,10 +1,46 @@
 <?php
 
+use Illuminate\Database\ConnectionInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\UploadedFile;
 use Laraveltoolkit\Facades\StoredAssets;
+use Laraveltoolkit\StoredAssets\Jobs\GarbageCollector;
 use Laraveltoolkit\StoredAssets\Jobs\GarbageCollectorManager;
 use Laraveltoolkit\StoredAssets\Jobs\TrashBinCleaner;
+use Laraveltoolkit\StoredAssets\StoredAssetModel;
 use Laraveltoolkit\Tests\Model\Product;
+
+it('uses the optimized suffix lookup on MySQL', function () {
+    $disk = Storage::fake('local');
+    $uuid = Str::uuid()->toString();
+    $assetPath = StoredAssets::path($uuid, 'test.txt');
+    $disk->put($assetPath, 'content');
+
+    $connection = Mockery::mock(ConnectionInterface::class);
+    $connection->shouldReceive('getDriverName')->once()->andReturn('mysql');
+
+    $model = Mockery::mock(StoredAssetModel::class)->makePartial();
+    $model->shouldReceive('getConnection')->once()->andReturn($connection);
+
+    $query = Mockery::mock(Builder::class);
+    $query->shouldReceive('where')->once()->with('id_suffix', substr($uuid, -4))->andReturnSelf();
+    $query->shouldReceive('selectRaw')->once()->andReturnSelf();
+    $query->shouldReceive('groupBy')->once()->with('field_model')->andReturnSelf();
+    $query->shouldReceive('get')->once()->andReturn(collect());
+
+    $originalStoredAssets = StoredAssets::getFacadeRoot();
+
+    try {
+        $storedAssets = StoredAssets::partialMock();
+        $storedAssets->shouldReceive('newModel')->once()->with([])->andReturn($model);
+        $storedAssets->shouldReceive('modelQuery')->once()->andReturn($query);
+        $storedAssets->shouldReceive('moveToTrashBin')->once()->with('local', $uuid)->andReturnFalse();
+
+        new GarbageCollector('local', dirname($assetPath, 3))->handle();
+    } finally {
+        StoredAssets::swap($originalStoredAssets);
+    }
+});
 
 it('can run all jobs', function () {
     config()->set('laraveltoolkit.stored_assets.trash_bin_cleaner_timeout', 55);

@@ -87,23 +87,17 @@ class UploadedFile extends \Illuminate\Http\UploadedFile
             return $target;
         }
 
-        switch ($this->getError()) {
-            case \UPLOAD_ERR_INI_SIZE:
-                throw new IniSizeFileException($this->getErrorMessage());
-            case \UPLOAD_ERR_FORM_SIZE:
-                throw new FormSizeFileException($this->getErrorMessage());
-            case \UPLOAD_ERR_PARTIAL:
-                throw new PartialFileException($this->getErrorMessage());
-            case \UPLOAD_ERR_NO_FILE:
-                throw new NoFileException($this->getErrorMessage());
-            case \UPLOAD_ERR_CANT_WRITE:
-                throw new CannotWriteFileException($this->getErrorMessage());
-            case \UPLOAD_ERR_NO_TMP_DIR:
-                throw new NoTmpDirFileException($this->getErrorMessage());
-            case \UPLOAD_ERR_EXTENSION:
-                throw new ExtensionFileException($this->getErrorMessage());
-        }
+        $message = $this->getErrorMessage();
 
-        throw new FileException($this->getErrorMessage());
+        throw match ($this->getError()) {
+            \UPLOAD_ERR_INI_SIZE => new IniSizeFileException($message),
+            \UPLOAD_ERR_FORM_SIZE => new FormSizeFileException($message),
+            \UPLOAD_ERR_PARTIAL => new PartialFileException($message),
+            \UPLOAD_ERR_NO_FILE => new NoFileException($message),
+            \UPLOAD_ERR_CANT_WRITE => new CannotWriteFileException($message),
+            \UPLOAD_ERR_NO_TMP_DIR => new NoTmpDirFileException($message),
+            \UPLOAD_ERR_EXTENSION => new ExtensionFileException($message),
+            default => new FileException($message),
+        };
     }
 }

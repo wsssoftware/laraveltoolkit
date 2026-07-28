@@ -12,117 +12,78 @@ use Symfony\Component\HttpFoundation\File\Exception\NoTmpDirFileException;
 use Symfony\Component\HttpFoundation\File\Exception\PartialFileException;
 use Symfony\Component\HttpFoundation\File\File;
 
-it('test from id method on not valid values', function () {
-    $empty1 = UploadedFile::fromId('');
-    $empty2 = UploadedFile::fromId(null);
-    $empty3 = UploadedFile::fromId(Str::uuid());
-    $empty4 = UploadedFile::fromId('not a valid uuid');
+it('creates, validates and moves uploaded files', function () {
+    $disk = Storage::fake(Filepond::diskName());
 
-    expect($empty1)
+    expect(UploadedFile::fromId(''))
         ->toBeNull()
-        ->and($empty2)
+        ->and(UploadedFile::fromId(null))
         ->toBeNull()
-        ->and($empty3)
+        ->and(UploadedFile::fromId(Str::uuid()))
         ->toBeNull()
-        ->and($empty4)
+        ->and(UploadedFile::fromId('not a valid uuid'))
         ->toBeNull();
-});
 
-it('can get from id', function () {
     $id = Str::uuid();
-    $diskName = Filepond::diskName();
-    $disk = Storage::fake($diskName);
     $disk->put(Filepond::path($id, 'image.png'), 'foo bar');
-
     $file = UploadedFile::fromId($id);
 
     expect($file)
         ->toBeInstanceOf(UploadedFile::class)
         ->and($file->isValid())
         ->toBeTrue()
-        ->and($file->move($disk->path('tmp')))
+        ->and($file->move($disk->path('tmp/from-id')))
         ->toBeInstanceOf(File::class);
 
-});
-
-it('can move on test file', function () {
     $id = Str::uuid();
-    $diskName = Filepond::diskName();
-    $disk = Storage::fake($diskName);
-    $disk->put(Filepond::path($id, 'image.png'), 'foo bar');
-    $file = new UploadedFile($disk->path(Filepond::path($id, 'image.png')), 'image.png', test: true);
-    expect($file)
-        ->toBeInstanceOf(UploadedFile::class)
-        ->and($file->isValid())
+    $path = Filepond::path($id, 'image.png');
+    $disk->put($path, 'foo bar');
+    $testFile = new UploadedFile($disk->path($path), 'image.png', test: true);
+
+    expect($testFile->isValid())
         ->toBeTrue()
-        ->and($file->move($disk->path('tmp')))
+        ->and($testFile->move($disk->path('tmp/test-file')))
         ->toBeInstanceOf(File::class);
-});
 
-it('can\'t move', function () {
     $id = Str::uuid();
-    $diskName = Filepond::diskName();
-    $disk = Storage::fake($diskName);
-    $disk->put(Filepond::path($id, 'image.png'), 'foo bar');
-    $file = UploadedFile::fromId($id);
-    $disk->delete(Filepond::path($id, 'image.png'));
+    $path = Filepond::path($id, 'image.png');
+    $disk->put($path, 'foo bar');
+    $unmovableFile = UploadedFile::fromId($id);
+    $disk->delete($path);
+    new ReflectionClass($unmovableFile)->getProperty('forceValidOnTest')->setValue($unmovableFile, true);
 
-    $reflection = new ReflectionClass($file);
-
-    $reflection->getProperty('forceValidOnTest')->setValue($file, true);
-
-    expect($file)
-        ->toBeInstanceOf(UploadedFile::class)
-        ->and($file->isValid())
+    expect($unmovableFile->isValid())
         ->toBeTrue()
-        ->and(fn () => $file->move($disk->path('foo-bar/test')))
-        ->toThrow(FileException::class);
-});
-
-it('can\'t move with other errors', function () {
-    $id = Str::uuid();
-    $diskName = Filepond::diskName();
-    $disk = Storage::fake($diskName);
-    $disk->put(Filepond::path($id, 'image.png'), 'foo bar');
-    $file = UploadedFile::fromId($id);
-
-    expect($file)
-        ->toBeInstanceOf(UploadedFile::class)
-        ->and($file->isValid())
-        ->toBeTrue()
-        ->and($file->move($disk->path('tmp')))
-        ->toBeInstanceOf(File::class)
-        ->and(fn () => $file->move($disk->path('tmp')))
+        ->and(fn () => $unmovableFile->move($disk->path('missing/directory')))
         ->toThrow(FileException::class);
 
-    $reflection = new ReflectionClass(Symfony\Component\HttpFoundation\File\UploadedFile::class);
-    $property = $reflection->getProperty('error');
+    $id = Str::uuid();
+    $path = Filepond::path($id, 'image.png');
+    $disk->put($path, 'foo bar');
+    $invalidFile = UploadedFile::fromId($id);
+    $invalidFile->move($disk->path('tmp/errors'));
 
-    $property->setValue($file, UPLOAD_ERR_INI_SIZE);
-    expect(fn () => $file->move($disk->path('tmp')))
-        ->toThrow(IniSizeFileException::class);
+    expect(fn () => $invalidFile->move($disk->path('tmp/errors')))
+        ->toThrow(FileException::class);
 
-    $property->setValue($file, UPLOAD_ERR_FORM_SIZE);
-    expect(fn () => $file->move($disk->path('tmp')))
-        ->toThrow(FormSizeFileException::class);
+    $errorProperty = new ReflectionClass(Symfony\Component\HttpFoundation\File\UploadedFile::class)
+        ->getProperty('error');
 
-    $property->setValue($file, UPLOAD_ERR_PARTIAL);
-    expect(fn () => $file->move($disk->path('tmp')))
-        ->toThrow(PartialFileException::class);
+    foreach ([
+        UPLOAD_ERR_INI_SIZE => IniSizeFileException::class,
+        UPLOAD_ERR_FORM_SIZE => FormSizeFileException::class,
+        UPLOAD_ERR_PARTIAL => PartialFileException::class,
+        UPLOAD_ERR_NO_FILE => NoFileException::class,
+        UPLOAD_ERR_CANT_WRITE => CannotWriteFileException::class,
+        UPLOAD_ERR_NO_TMP_DIR => NoTmpDirFileException::class,
+        UPLOAD_ERR_EXTENSION => ExtensionFileException::class,
+    ] as $error => $exception) {
+        $errorProperty->setValue($invalidFile, $error);
 
-    $property->setValue($file, UPLOAD_ERR_NO_FILE);
-    expect(fn () => $file->move($disk->path('tmp')))
-        ->toThrow(NoFileException::class);
+        expect(fn () => $invalidFile->move($disk->path('tmp/errors')))
+            ->toThrow($exception);
+    }
 
-    $property->setValue($file, UPLOAD_ERR_CANT_WRITE);
-    expect(fn () => $file->move($disk->path('tmp')))
-        ->toThrow(CannotWriteFileException::class);
-
-    $property->setValue($file, UPLOAD_ERR_NO_TMP_DIR);
-    expect(fn () => $file->move($disk->path('tmp')))
-        ->toThrow(NoTmpDirFileException::class);
-
-    $property->setValue($file, UPLOAD_ERR_EXTENSION);
-    expect(fn () => $file->move($disk->path('tmp')))
-        ->toThrow(ExtensionFileException::class);
+    defer()->invoke();
+    expect($disk->directoryMissing(Filepond::path($id)))->toBeTrue();
 });

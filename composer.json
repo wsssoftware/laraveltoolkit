@@ -30,9 +30,9 @@
     "laravel/pint": "^v1.29.0",
     "nunomaduro/collision": "^8.8.2",
     "orchestra/testbench": "^10.6.0||^v11.1.0",
-    "pestphp/pest": "^v4.5.0",
-    "pestphp/pest-plugin-arch": "^v4.0.2",
-    "pestphp/pest-plugin-laravel": "^v4.1.0",
+    "pestphp/pest": "^v5.0.0",
+    "pestphp/pest-plugin-arch": "^v5.0.0",
+    "pestphp/pest-plugin-laravel": "^v5.0.0",
     "spatie/laravel-ray": "^1.43.7"
   },
   "autoload": {
@@ -54,9 +54,9 @@
     "post-autoload-dump": "@composer run prepare",
     "prepare": "@php vendor/bin/testbench package:discover --ansi",
     "analyse": "vendor/bin/phpstan analyse",
-    "test": "vendor/bin/pest",
-    "test-dirty": "vendor/bin/pest --dirty",
-    "test-coverage": "vendor/bin/pest --coverage",
+    "test": "vendor/bin/pest --parallel",
+    "test-dirty": "vendor/bin/pest --parallel --dirty",
+    "test-coverage": "@php -d memory_limit=1G vendor/bin/pest --parallel --coverage --exactly=100",
     "format": "vendor/bin/pint"
   },
   "config": {
