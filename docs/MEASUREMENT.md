@@ -203,12 +203,22 @@ $length->to(LengthUnit::CENTIMETER)->value(); // 100.0
 $length->toFloat();                      // 1.0
 $length->toInteger();                    // 1
 $length->round(2);                       // 1.0
+$length->gt(length(99, 'cm'));           // true; measurement units are normalized
+$length->gte(1);                         // true; scalars use the current unit (meters)
+$length->lt(1.01);                       // true
+$length->lte(length(100, 'cm'));         // true
 ```
 
 `toFloat()` returns the displayed value explicitly as a `float`. `toInteger()` rounds the displayed value to an
 integer using `RoundingMode::HalfAwayFromZero` by default and throws an `OverflowException` when the result is outside
 PHP's native integer range. `round()` returns the displayed value as a `float` rounded to the requested precision.
 Both rounding methods accept a different `RoundingMode` as their last argument.
+
+`compare()`, `equals()`, `gt()`, `gte()`, `lt()`, and `lte()` accept another compatible measurement or an `int` or
+`float`. Measurements are compared through their canonical reference unit, while scalar values are interpreted as
+absolute values in the receiving object's current unit. Incompatible measurement dimensions throw an
+`InvalidArgumentException`. This distinction is especially important for temperatures, where a scalar is an absolute
+value rather than a temperature delta.
 
 Use `referenceValue()` to inspect the dimension's canonical value. It returns an `int` for an integral value within
 PHP's native integer range, an exact decimal `string` for a larger integer, and a `float` for a fractional value.
