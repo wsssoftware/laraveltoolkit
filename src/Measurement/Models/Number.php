@@ -56,6 +56,30 @@ abstract class Number implements Arrayable, Castable, JsonSerializable
         return (float) (string) $this->decimalValue();
     }
 
+    public function toInteger(
+        RoundingMode $roundingMode = RoundingMode::HalfAwayFromZero,
+    ): int {
+        $value = $this->decimalValue()->round(0, $roundingMode);
+
+        if ($value->compare(PHP_INT_MIN) < 0 || $value->compare(PHP_INT_MAX) > 0) {
+            throw new OverflowException('The rounded measurement value exceeds the native integer range.');
+        }
+
+        return (int) (string) $value;
+    }
+
+    public function toFloat(): float
+    {
+        return $this->value();
+    }
+
+    public function round(
+        int $precision = 0,
+        RoundingMode $roundingMode = RoundingMode::HalfAwayFromZero,
+    ): float {
+        return (float) (string) $this->decimalValue()->round($precision, $roundingMode);
+    }
+
     public function referenceValue(): int|float|string
     {
         $value = $this->referenceValueString();
@@ -86,14 +110,9 @@ abstract class Number implements Arrayable, Castable, JsonSerializable
         ?string $locale = null,
     ): string|false {
         $locale ??= app()->getLocale();
-        $value = LaravelNumber::format(
-            $this->value(),
-            $precision,
-            $maxPrecision,
-            $locale,
-        );
+        $value = $this->formatWithoutUnit($precision, $maxPrecision, $locale);
 
-        // NumberFormatter only returns false for unsupported input types.
+        // formatWithoutUnit() only returns false for unsupported input types.
         // @codeCoverageIgnoreStart
         if ($value === false) {
             return false;
@@ -109,6 +128,29 @@ abstract class Number implements Arrayable, Castable, JsonSerializable
         $postfix = $this->unit()->formattedName($displayValue, $locale);
 
         return "{$value} {$postfix}";
+    }
+
+    public function formatWithoutUnit(
+        ?int $precision = null,
+        ?int $maxPrecision = null,
+        ?string $locale = null,
+    ): string|false {
+        $locale ??= app()->getLocale();
+        $value = LaravelNumber::format(
+            $this->value(),
+            $precision,
+            $maxPrecision,
+            $locale,
+        );
+
+        // NumberFormatter only returns false for unsupported input types.
+        // @codeCoverageIgnoreStart
+        if ($value === false) {
+            return false;
+        }
+        // @codeCoverageIgnoreEnd
+
+        return $value;
     }
 
     public function add(
