@@ -26,6 +26,14 @@ it('converts absolute temperatures with their offsets', function () {
         ->and(temperature(0)->referenceValue())->toBe(2_458_350_000_000);
 });
 
+it('compares absolute temperatures across units and against current-unit scalars', function () {
+    expect(temperature(0, '°C')->gte(temperature(32, '°F')))->toBeTrue()
+        ->and(temperature(0, '°C')->lte(temperature(273.15, 'K')))->toBeTrue()
+        ->and(temperature(32, '°F')->equals(32))->toBeTrue()
+        ->and(temperature(32, '°F')->gt(31.9))->toBeTrue()
+        ->and(temperature(273.15, 'K')->lt(274))->toBeTrue();
+});
+
 it('applies scalar temperature deltas in the current scale', function () {
     expect(temperature(10, '°C')->add(5)->value())->toBe(15.0)
         ->and(temperature(50, '°F')->add(10)->value())->toBe(60.0)

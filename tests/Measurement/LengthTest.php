@@ -112,10 +112,28 @@ it('performs immutable arithmetic in the current unit', function () {
         ->and($quotient->unit)->toBe(LengthUnit::METER);
 });
 
-it('compares equivalent lengths', function () {
+it('compares lengths using measurements and scalars in the current unit', function () {
     expect(length(1, 'm')->equals(length(100, 'cm')))->toBeTrue()
+        ->and(length(1, 'm')->equals(1))->toBeTrue()
         ->and(length(1, 'm')->compare(length(99, 'cm')))->toBe(1)
-        ->and(length(1, 'm')->compare(length(101, 'cm')))->toBe(-1);
+        ->and(length(1, 'm')->compare(1.5))->toBe(-1)
+        ->and(length(1, 'm')->gt(length(99, 'cm')))->toBeTrue()
+        ->and(length(1, 'm')->gt(0.99))->toBeTrue()
+        ->and(length(1, 'm')->gte(length(100, 'cm')))->toBeTrue()
+        ->and(length(1, 'm')->gte(1))->toBeTrue()
+        ->and(length(1, 'm')->lt(length(101, 'cm')))->toBeTrue()
+        ->and(length(1, 'm')->lt(1.01))->toBeTrue()
+        ->and(length(1, 'm')->lte(length(100, 'cm')))->toBeTrue()
+        ->and(length(1, 'm')->lte(1))->toBeTrue()
+        ->and(length(1, 'm')->gt(1))->toBeFalse()
+        ->and(length(1, 'm')->gte(1.01))->toBeFalse()
+        ->and(length(1, 'm')->lt(1))->toBeFalse()
+        ->and(length(1, 'm')->lte(0.99))->toBeFalse();
+});
+
+it('rejects comparisons between incompatible measurement types', function () {
+    expect(fn () => length(1, 'm')->gt(weight(1, 'kg')))
+        ->toThrow(InvalidArgumentException::class, 'Cannot operate on [length] and [weight] measurements.');
 });
 
 it('serializes a length without requiring a string representation', function () {

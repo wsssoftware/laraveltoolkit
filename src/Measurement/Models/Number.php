@@ -219,16 +219,34 @@ abstract class Number implements Arrayable, Castable, JsonSerializable
         return $this->newInstance($this->referenceValue, $unit);
     }
 
-    public function compare(Number $number): int
+    public function compare(Number|int|float $value): int
     {
-        $this->assertCompatible($number->unit());
-
-        return $this->referenceValue->compare($number->referenceValue);
+        return $this->referenceValue->compare($this->comparisonReferenceValue($value));
     }
 
-    public function equals(Number $number): bool
+    public function equals(Number|int|float $value): bool
     {
-        return $this->compare($number) === 0;
+        return $this->compare($value) === 0;
+    }
+
+    public function gt(Number|int|float $value): bool
+    {
+        return $this->compare($value) > 0;
+    }
+
+    public function gte(Number|int|float $value): bool
+    {
+        return $this->compare($value) >= 0;
+    }
+
+    public function lt(Number|int|float $value): bool
+    {
+        return $this->compare($value) < 0;
+    }
+
+    public function lte(Number|int|float $value): bool
+    {
+        return $this->compare($value) <= 0;
     }
 
     public function toArray(): array
@@ -317,6 +335,20 @@ abstract class Number implements Arrayable, Castable, JsonSerializable
         $this->assertCompatible($value->unit());
 
         return $value->referenceValue;
+    }
+
+    private function comparisonReferenceValue(Number|int|float $value): BcNumber
+    {
+        if ($value instanceof Number) {
+            $this->assertCompatible($value->unit());
+
+            return $value->referenceValue;
+        }
+
+        return self::roundReference(
+            $this->unit()->toReference(self::scalarToNumber($value)),
+            RoundingMode::HalfAwayFromZero,
+        );
     }
 
     private static function roundReference(BcNumber $value, RoundingMode $roundingMode): BcNumber
