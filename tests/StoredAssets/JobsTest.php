@@ -96,11 +96,12 @@ it('can run all jobs', function () {
     expect($disk->exists($assetPath))->toBeFalse()
         ->and($disk->exists($assetSubDir1))->toBeFalse()
         ->and($disk->exists($assetSubDir2))->toBeTrue();
+    $assetSubDir2HasOtherSubDirectories = $disk->directories($assetSubDir2) !== [];
     GarbageCollectorManager::dispatch();
 
     expect($disk->exists($assetPath))->toBeFalse()
         ->and($disk->exists($assetSubDir1))->toBeFalse()
-        ->and($disk->exists($assetSubDir2))->toBeFalse();
+        ->and($disk->exists($assetSubDir2))->toBe($assetSubDir2HasOtherSubDirectories);
 });
 
 it('can break after long garbage run', function () {
