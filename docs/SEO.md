@@ -1,125 +1,180 @@
-### SEO
+# SEO metadata and robots
 
-Provide an easy way to use SEO on your application.
+The SEO module builds one request-scoped metadata payload for Blade and Inertia. It supports titles, descriptions,
+canonical URLs, robots directives, Open Graph, Twitter cards, crawler detection, friendly URLs, and dynamic
+`robots.txt` output.
+
+## Configure metadata
+
+Set metadata before returning the response, usually in a controller:
 
 ```php
-use Illuminate\Http\Request;
-use Inertia\Response;
+use Inertia\Inertia;
 use Laraveltoolkit\Facades\SEO;
 use Laraveltoolkit\SEO\Image;
+use Laraveltoolkit\SEO\RobotRule;
 
-class ExampleController
+public function __invoke()
 {
-    /**
-     * Handle the incoming request.
-     */
-    public function __invoke(Request $request): Response
-    {
-        SEO::withTitle('Client Orders')
-            ->withoutDescription('A long description of this page')
-            ->withCanonical('https://foo.com')
-            ->withOpenGraphImage(new Image('public', 'seo.webp'))
-            ->withTwitterCardImage(new Image('public', 'seo.webp', 'alt title'));
-            
-        // If you want to remove a property you can call methods prefixed with `without`
-        SEO::withoutOpenGraphImage();
-            
-        return Inertia::render('Example');
-    }
+    SEO::withTitle('Client orders')
+        ->withDescription('Review and manage client orders.')
+        ->withCanonical(route('orders.index'))
+        ->withRobots(RobotRule::ALL)
+        ->withOpenGraphType('website')
+        ->withOpenGraphImage(new Image('public', 'seo/orders.webp', 'Orders dashboard'))
+        ->withTwitterCardSite('@example')
+        ->withTwitterCardImage(new Image('public', 'seo/orders.webp', 'Orders dashboard'));
+
+    return Inertia::render('Orders/Index');
 }
 ```
 
-On Inertia (If you use) middleware put:
+Images are resolved through the configured Laravel filesystem disk. Their URL receives the file's last-modified value
+as a cache-busting query string when available.
+
+## Metadata propagation
+
+Propagation is enabled by default. Changing the main title, description, or canonical URL also updates matching Open
+Graph and Twitter values:
 
 ```php
-//...
-public function share(Request $request): array
-    {
-        return [
-            //...
-            'seo' => fn() => SEO::payload(),
-        ];
-    }
-//...
+SEO::withTitle('Orders');
+// Also sets Open Graph and Twitter titles.
+
+SEO::withTitle('Orders', propagate: false);
+// Changes only the main title.
+
+SEO::withoutPropagation()
+    ->withTitle('Orders');
 ```
 
-On your views vue `seo` blade component to this works on non JS crawlers
+Use the specific methods when networks need different content:
 
-```bladehtml
+```php
+SEO::withOpenGraphTitle('Orders on Example')
+    ->withOpenGraphDescription('Browse the latest orders.')
+    ->withOpenGraphUrl(route('orders.index'))
+    ->withTwitterCardTitle('Latest orders')
+    ->withTwitterCardDescription('Browse them on Example.');
+```
+
+Every `with...` method has a corresponding `without...` method for optional values, for example
+`withoutTitle()`, `withoutCanonical()`, and `withoutOpenGraphImage()`.
+
+When no canonical URL or Open Graph URL is configured, the payload uses the current request URL. Calling
+`withoutCanonical()` explicitly suppresses the canonical link.
+
+## Server-rendered tags
+
+Add the Blade component to the document `<head>` so crawlers receive metadata in the initial HTML:
+
+```blade
 <head>
-    ...
-    <x-seo/>
-    ...
+    <!-- ... -->
+    <x-seo />
 </head>
 ```
 
-On your Vue layout load Head component to update head properties when navigate between pages.
+The component is registered automatically and renders the package's SEO view.
+
+## Inertia and Vue
+
+Share the payload from `HandleInertiaRequests`:
+
+```php
+use Illuminate\Http\Request;
+use Laraveltoolkit\Facades\SEO;
+
+public function share(Request $request): array
+{
+    return [
+        ...parent::share($request),
+        'seo' => fn () => SEO::payload(),
+    ];
+}
+```
+
+Then render Vuetoolkit's `Head` component once in the application layout so metadata follows client-side navigation:
 
 ```vue
-<template>
-    <div>
-        <Head/>
-    </div>
-</template>
-
-<script lang="ts">
-    import {defineComponent} from "vue";
-    import {Head} from "laraveltoolkit";
-
-    export default defineComponent({
-        name: "TestLayout",
-        components: {
-            Head,
-        }
-    });
+<script setup lang="ts">
+import { Head } from 'laraveltoolkit';
 </script>
+
+<template>
+    <Head />
+    <slot />
+</template>
 ```
 
-SEO facade also provide some utils methods
+The Blade and Vue renderers are complementary: Blade covers the initial response and non-JavaScript crawlers, while
+Vue updates metadata during Inertia visits.
+
+## Robots meta directives
+
+Pass enum values or directive strings:
 
 ```php
-use Laraveltoolkit\Facades\SEO;
+use Laraveltoolkit\SEO\RobotRule;
 
-// Returns true if request agent is a crawler
+SEO::withRobots(
+    RobotRule::NOINDEX,
+    RobotRule::NOFOLLOW,
+    'max-snippet:120',
+);
+
+SEO::withoutRobots();
+```
+
+Supported enum cases include `ALL`, `NOINDEX`, `NOFOLLOW`, `NONE`, `NOARCHIVE`, `NOSNIPPET`, `NOIMAGEINDEX`,
+`NOTRANSLATE`, `INDEXIFEMBEDDED`, `MAX_SNIPPET`, `MAX_IMAGE_PREVIEW`, `MAX_VIDEO_PREVIEW`, and
+`UNAVAILABLE_AFTER`.
+
+## `robots.txt`
+
+When default sitemap routes are enabled, the package also registers `/robots.txt`. Its behavior is:
+
+1. `public/robots.txt` wins because the web server normally serves it before Laravel;
+2. when `public/robots.stub` exists, Laravel returns its contents and appends the configured sitemap URL;
+3. otherwise, Laravel generates the file from SEO configuration and request-time rules.
+
+Configure generated rules in `config/laraveltoolkit.php` or at runtime:
+
+```php
+SEO::withRobotsTxtRule(
+    userAgent: '*',
+    allow: collect(['/']),
+    disallow: collect(['/admin', '/account']),
+);
+
+SEO::withRobotsTxtSitemap(route('lt.sitemap'));
+
+SEO::withoutRobotsTxtRule('Googlebot');
+SEO::withoutRobotsTxtRule(); // Remove every user-agent rule.
+SEO::withoutRobotsTxtSitemap(); // Restore the default sitemap route when available.
+```
+
+For sitemap registration and indexes, see the [Sitemap guide](SITEMAP.md).
+
+## Utilities
+
+```php
 SEO::isCrawler();
-// or
-SEO::isCrawler('user agent');
+SEO::isCrawler($request->userAgent());
 
-// Transform a human string into a pretty wrote url string
-SEO::friendlyUrlString('A example of string!')
-// returns 'a-example-of-string'
+SEO::friendlyUrlString('An example string!');
+// an-example-string
+
+SEO::friendlyUrlString('R&D @ Example', separator: '_', language: 'en');
 ```
 
-In conjunction with the [Sitemap](SITEMAP.md) helpers, you can use the SEO facade to generate your Robots.txt.
+Friendly URL behavior can be customized under `seo.friendly_url` in the package configuration.
 
-There are 3 possibilities:
+## Defaults
 
-1. Keep your `robots.txt` in the public folder, nothing will happen.
-2. Change its name to `robots.stub`, so, the Sitemap helper will take the stub content and add the sitemap url every
-   time the user accesses https://foobar.com/robots.txt.
-3. Or finally, you can simply remove it and then and SEO facade will generate all then.
+Publish `laraveltoolkit-config` to define site-wide metadata, social images, robots rules, and propagation. Page-level
+facade calls override those defaults for the current request.
 
-You can configura using the follow facade methods:
+---
 
-```php
-use Laraveltoolkit\Facades\SEO;
-// Disallow some path
-SEO::withRobotsTxtRule('user_agent_name', null, collect(['disallow_this_path', 'this_other_too']));
-
-// Allow some path
-SEO::withRobotsTxtRule('*', collect(['allow_this_path', 'this_other_too']));
-
-// Remove one user agent
-SEO::withoutRobotsTxtRule('google_bot');
-
-// Remove all users agent
-SEO::withoutRobotsTxtRule();
-
-// Passing sitemap url
-SEO::withRobotsTxtSitemap('https://fooobar.com/custom-sitemap.txt');
-
-// Removing sitemap url
-SEO::withoutRobotsTxtSitemap();
-```
-
-> If you not pass sitemap url, will be used de default sitemap route (`lt.sitemap`)
+[Back to the documentation index](README.md)

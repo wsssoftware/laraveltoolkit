@@ -1,99 +1,123 @@
-# A modern toolkit of components and utilities for Laravel applications, developed by WSS Software.
+# Laravel Toolkit
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/wsssoftware/laraveltoolkit.svg?style=flat-square)](https://packagist.org/packages/wsssoftware/laraveltoolkit)
-[![run-tests](https://github.com/wsssoftware/laraveltoolkit/actions/workflows/run-tests.yml/badge.svg?branch=2.x)](https://github.com/wsssoftware/laraveltoolkit/actions/workflows/run-tests.yml)
-[![Fix PHP code style issues](https://github.com/wsssoftware/laraveltoolkit/actions/workflows/fix-php-code-style-issues.yml/badge.svg)](https://github.com/wsssoftware/laraveltoolkit/actions/workflows/fix-php-code-style-issues.yml)
+[![Tests](https://github.com/wsssoftware/laraveltoolkit/actions/workflows/run-tests.yml/badge.svg?branch=3.x)](https://github.com/wsssoftware/laraveltoolkit/actions/workflows/run-tests.yml)
+[![Code Style](https://github.com/wsssoftware/laraveltoolkit/actions/workflows/fix-php-code-style-issues.yml/badge.svg)](https://github.com/wsssoftware/laraveltoolkit/actions/workflows/fix-php-code-style-issues.yml)
 [![Total Downloads](https://img.shields.io/packagist/dt/wsssoftware/laraveltoolkit.svg?style=flat-square)](https://packagist.org/packages/wsssoftware/laraveltoolkit)
-[![codecov](https://codecov.io/gh/wsssoftware/laraveltoolkit/branch/2.x/graph/badge.svg?token=nzaXcoyc3q)](https://codecov.io/gh/wsssoftware/laraveltoolkit)
+[![Code Coverage](https://codecov.io/gh/wsssoftware/laraveltoolkit/branch/3.x/graph/badge.svg?token=nzaXcoyc3q)](https://codecov.io/gh/wsssoftware/laraveltoolkit)
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+A practical collection of production-ready building blocks for Laravel applications. Laravel Toolkit combines typed
+measurements, ACL, stored assets, SEO and sitemap generation, FilePond uploads, deployment helpers, validation rules,
+and small framework extensions behind one package.
+
+Use only the features your application needs. The service provider is discovered automatically and registers the
+package configuration, routes, migrations, commands, views, translations, and macros.
 
 > [!IMPORTANT]
-> Some features from this package work in association with the
-> package [vuetoolkit](https://github.com/wsssoftware/vuetoolkit). For mor information read it's related docs.
+> The Vue, Inertia, and PrimeVue examples use the companion
+> [Vuetoolkit](https://github.com/wsssoftware/vuetoolkit) package. Backend-only features do not require it.
 
-## Compatibility
+## Requirements
 
-| Package Version | Vuetoolkit Version | Laravel Version | Inertia Version |
-|-----------------|--------------------|-----------------|-----------------|
-| 1.x             | ❌                  | `11.x` `12.x`   | `1.x` `2.x`     |
-| 2.x             | `1.x`              | `11.x` `12.x`   | `2.x`           |           
-| 3.x             | `2.x`              | `12.x` `13.x`   | `3.x`           |           
+- PHP 8.4 or newer
+- Laravel 12 or 13
+- Inertia Laravel 3
+- PHP extensions: BCMath, DOM, and Intl
+- Vuetoolkit 2.x only when using the companion frontend components
+
+| Laravel Toolkit | Laravel | Inertia Laravel | Vuetoolkit |
+|:---------------:|:-------:|:---------------:|:----------:|
+| 3.x | 12.x, 13.x | 3.x | 2.x |
+| 2.x | 11.x, 12.x | 2.x | 1.x |
+| 1.x | 11.x, 12.x | 1.x, 2.x | — |
 
 ## Installation
 
-You can install the package via composer:
+Install the package with Composer:
 
 ```bash
 composer require wsssoftware/laraveltoolkit
 ```
 
-You can publish the config file with:
+Publish the configuration when you need to change defaults:
 
 ```bash
-php artisan vendor:publish --tag="laraveltoolkit-config"
+php artisan vendor:publish --tag=laraveltoolkit-config
 ```
 
-You can publish the sitemap config file with:
+Features backed by database tables, such as ACL and Stored Assets, also need the package migrations:
 
 ```bash
-php artisan vendor:publish --tag="laraveltoolkit-sitemap"
+php artisan vendor:publish --tag=laraveltoolkit-migrations
+php artisan migrate
 ```
 
-This is the contents of the published config file:
+## Quick start
+
+The package is a toolkit rather than a single workflow. These examples show a few features that work immediately
+after installation:
 
 ```php
-return [
-];
+use Illuminate\Support\Number;
+use Illuminate\Support\Str;
+use Laraveltoolkit\Measurement\Enums\LengthUnit;
+use Laraveltoolkit\Rules\DocumentRule;
+
+length(2.54, 'cm')->to(LengthUnit::MILLIMETER)->value(); // 25.4
+
+Str::applyMask('12345678901', '000.000.000-00'); // 123.456.789-01
+
+Number::spellCurrency(42.50, in: 'BRL', locale: 'pt_BR');
+
+$request->validate([
+    'document' => ['required', DocumentRule::both()],
+]);
 ```
 
-## Usage
+For an application feature, choose a guide below and follow its setup section.
 
-### [ACL](docs/ACL.md)
+## Features
 
-A minimalist implementation of an access control level
+### Application building blocks
 
-### [Colors](docs/COLORS.md)
+| Feature | What it provides |
+|---|---|
+| [Measurements](docs/MEASUREMENT.md) | Precise value objects, conversion, formatting, arithmetic, and Eloquent casts for ten measurement dimensions. |
+| [ACL](docs/ACL.md) | Database-backed policies and roles integrated with Laravel Gate and optional Vue components. |
+| [Stored Assets](docs/STORED_ASSETS.md) | Recipe-driven file storage, Eloquent casts, multiple asset variants, and garbage collection. |
+| [Utilities](docs/UTILITIES.md) | CPF/CNPJ and phone validation, enum helpers, regex utilities, framework macros, and extended fluent objects. |
 
-A toolset of helpers for colors.
+### Inertia and frontend integrations
 
-### [Deploy](docs/DEPLOY.md)
+| Feature | What it provides |
+|---|---|
+| [PrimeVue Data](docs/PRIMEVUE_DATA.md) | Server-side filtering, sorting, and pagination for PrimeVue DataTable and DataView. |
+| [FilePond](docs/FILEPOND.md) | Temporary, chunked uploads with request conversion to Laravel uploaded files. |
+| [Flash](docs/FLASH.md) | Chainable session messages consumed by the Vuetoolkit PrimeVue toast receiver. |
+| [Multi-domain Inertia](docs/MULTI_DOMAIN.md) | Cross-domain Inertia redirect handling and the required CORS setup. |
 
-A simple deploy and maintenance mode.
+### SEO and operations
 
-### [Flash](docs/FLASH.md)
+| Feature | What it provides |
+|---|---|
+| [SEO](docs/SEO.md) | Server- and client-rendered metadata, Open Graph, Twitter cards, robots directives, and `robots.txt`. |
+| [Sitemap](docs/SITEMAP.md) | Cached XML sitemaps, domain-specific entries, query chunking, and sitemap indexes. |
+| [Deploy](docs/DEPLOY.md) | Two-stage deployment commands and a broadcast-aware Inertia maintenance page. |
 
-Simple flash messages from backend to front end.
+See the [documentation index](docs/README.md) for the complete guide map and common setup commands.
 
-### [FilePond](docs/FILEPOND.md)
+## Configuration
 
-A bridge between FilePond and Laravel
+All package settings live in `config/laraveltoolkit.php` after publishing. They are grouped by feature:
 
-### [PrimeVue Data](docs/PRIMEVUE_DATA.md)
+- `deploy`: maintenance route and deployment actions
+- `flash`: default lifetime, closability, and toast group
+- `filepond`: temporary disk, path, and garbage collection
+- `seo`: metadata defaults and propagation
+- `sitemap`: routes, caching, timeouts, and XML limits
+- `stored_assets`: disk, model, paths, naming, and trash retention
 
-A minimalist implementation of DataTables and DataView on Laravel
-
-### [Measurement](docs/MEASUREMENT.md)
-
-Typed measurements with localized conversion and arbitrary-precision decimal arithmetic.
-
-### [SEO](docs/SEO.md)
-
-Tools to help dev to handle with SEO features.
-
-### [SiteMap](docs/SITEMAP.md)
-
-A toolkit to automatically generate sitemaps for application
-
-### [Stored Assets](docs/STORED_ASSETS.md)
-
-Tools to help handle with storing assets.
-
-## Multi domain application
-
-If you are using a multi-domain application with InertiaJs, you can use [this guide](docs/MULTI_DOMAIN.md) to configure
-your cors policies
-and add a middleware to replace redirects for Inertia::location() when needed.
+Only publish the configuration when you need to override these defaults.
 
 ## Testing
 
@@ -101,23 +125,30 @@ and add a middleware to replace redirects for Inertia::location() when needed.
 composer test
 ```
 
-## Changelog
+Code style can be checked and fixed with:
 
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+```bash
+composer format
+```
 
 ## Contributing
 
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+Contributions are welcome. Read the [contribution guide](CONTRIBUTING.md) before opening a pull request.
 
-## Security Vulnerabilities
+## Changelog
 
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
+See the [changelog](CHANGELOG.md) for release history and upgrade notes.
+
+## Security
+
+Please report security vulnerabilities through the repository's
+[private security advisory form](https://github.com/wsssoftware/laraveltoolkit/security/advisories/new), not a public issue.
 
 ## Credits
 
 - [Allan Mariucci Carvalho](https://github.com/wsssoftware)
-- [All Contributors](../../contributors)
+- [All contributors](https://github.com/wsssoftware/laraveltoolkit/graphs/contributors)
 
 ## License
 
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+Laravel Toolkit is open-source software licensed under the [MIT license](LICENSE.md).

@@ -1,281 +1,262 @@
-## PrimeVue Data
+# PrimeVue Data
 
-A minimalist implementation of DataTables and DataView on Laravel
+PrimeVue Data connects Eloquent pagination to the companion Vuetoolkit `DataTableAdapter` and `DataViewAdapter`.
+Frontend pagination, sorting, and filter state are posted through Inertia; the backend `primevueData()` macro applies
+them to the query and returns a standard Laravel paginator with its page name included.
 
-### Frontend (Laravel)
+## Backend setup
 
-On laravel, basically, you need to do only two tings.
+### Accept `GET` and `POST`
 
-#### Change route method
-
-```php
-// From this
-Route::get('/', Controller::class);
-
-// To this
-Route::getAndPost('/', Controller::class);
-```
-
-> To avoid polluting the URLs with search and sorting parameters, we send the parameters via post in the Inertia`reload`
-> method.
-
-#### Config action `data` prop
+The adapters use `POST` for partial reloads so table state does not fill the URL query string. Register the route with
+the package macro:
 
 ```php
-use \App\Models\User;
-use \Inertia\Inertia;
+use Illuminate\Support\Facades\Route;
 
-Inertia::render('Users', [
-    'users' => fn() => User::query()->primevueData(),
-])
+Route::getAndPost('/users', UsersController::class)
+    ->name('users.index');
 ```
 
-> This way, the data from the current pagination page will be loaded together with the first load.
+This registers `HEAD`, `GET`, and `POST` for the same action. Apply the same authentication, authorization, and rate
+limiting middleware you would use for a normal data endpoint.
 
-With Lazy load:
+### Return paginated data
 
 ```php
-use \App\Models\User;
-use \Inertia\Inertia;
+use App\Models\User;
+use Inertia\Inertia;
 
-Inertia::render('Users', [
-    'users' => Inertia::lazy(fn() => User::query()->primevueData()),
-])
+return Inertia::render('Users/Index', [
+    'users' => fn () => User::query()->primevueData(),
+]);
 ```
 
-> Here, the main page is loaded first, and only then does it load the table data automatically.
-
-With two `data`:
+The builder macro accepts three arguments:
 
 ```php
-use \App\Models\User;
-use \Inertia\Inertia;
-
-Inertia::render('Users', [
-    'users' => Inertia::lazy(fn() => User::query()->primevueData()),
-    'categories' => Inertia::lazy(fn() => Categories::query()->primevueData('page_categories')),
-])
+primevueData(
+    pageName: 'page',
+    globalFilterColumns: null,
+    mapOrResource: null,
+)
 ```
 
-> If you do not change the `pageName` attribute when using more than one `data`, some unexpected behavior may occur.
+- `pageName` isolates pagination and adapter options. Use a unique value for each dataset on a page.
+- `globalFilterColumns` limits the columns searched by the global filter. When `null`, all model table columns are
+  discovered through the schema.
+- `mapOrResource` transforms page items with a closure or a Laravel JSON resource class.
 
-With custom global `$globalFilterColumn` attribute:
+An explicit global search list is usually faster and avoids searching sensitive or unsuitable columns:
 
 ```php
-use \App\Models\User;
-use \Inertia\Inertia;
-
-Inertia::render('Users', [
-    'users' => Inertia::lazy(fn() => User::query()->primevueData(globalFilterColumn: 'foo')),
-])
+'users' => fn () => User::query()->primevueData(
+    globalFilterColumns: ['name', 'email'],
+),
 ```
 
-> In some scenarios, such as when the database table in question has a column called `global`, it may be necessary to
-> change this attribute so that it is possible to search all columns in the table.
+Transform results without losing paginator metadata:
 
-### Frontend (PrimeVue)
+```php
+use App\Http\Resources\UserResource;
+
+'users' => fn () => User::query()->primevueData(
+    mapOrResource: UserResource::class,
+),
+```
+
+### Deferred data
+
+Use an Inertia deferred prop when the page shell should render before the query:
+
+```php
+'users' => Inertia::defer(
+    fn () => User::query()->primevueData(),
+),
+```
+
+For two adapters, give each one a distinct prop and page name:
+
+```php
+return Inertia::render('Dashboard', [
+    'users' => Inertia::defer(
+        fn () => User::query()->primevueData(pageName: 'users_page'),
+    ),
+    'categories' => Inertia::defer(
+        fn () => Category::query()->primevueData(pageName: 'categories_page'),
+    ),
+]);
+```
+
+## Supported filters
+
+The backend understands PrimeVue filter operators `and` and `or`, plus these match modes:
+
+| Match mode | Behavior |
+|---|---|
+| `startsWith` | Case-insensitive text prefix. |
+| `contains` | Case-insensitive text search. |
+| `notContains` | Case-insensitive negative text search. |
+| `endsWith` | Case-insensitive text suffix. |
+| `equals` | Database equality. |
+| `notEquals` | Database inequality. |
+
+Empty constraints and unknown match modes are ignored. Global filtering uses the first valid global constraint and
+joins the configured columns with `OR`.
 
 ## DataTable
 
-An example of how use with DataTable.
-
-Some points of `attention` are:
-
-- Remember to put lazy prop on DataTable.
-- You must create filter data prop to use the filters function. Remember to pass it on DataTable.
-
-Available adapter props:
-
-- **manualFilterDebounceWait**: How many milliseconds filter will debounce before do it.
-- **globalFilterName**: Here you configure if needed the global filter key. On this filter, it will search all (or
-  configured in Laravel
-- **propName (required)**: Prop that will be load. Configured by you on Inertia props on Laravel. Eg.: users.
-- **rows**: How many rows per page adapter will get.
-- **preserveState**: If true, will preserve sort, filter and page state.
-
-> If you want to use preserveState, you must set `first`, `sortField` and `sortOrder` like bellow to work correctly.
+Create the PrimeVue filter state, then connect every adapter callback and value to the matching table prop:
 
 ```vue
+<script setup lang="ts">
+import { ref } from 'vue';
+import Button from 'primevue/button';
+import Column from 'primevue/column';
+import DataTable from 'primevue/datatable';
+import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
+import { DataTableAdapter } from 'laraveltoolkit';
+
+const filters = ref({
+    global: {
+        operator: FilterOperator.AND,
+        constraints: [{ value: '', matchMode: FilterMatchMode.CONTAINS }],
+    },
+    name: {
+        operator: FilterOperator.AND,
+        constraints: [{ value: '', matchMode: FilterMatchMode.CONTAINS }],
+    },
+    email: {
+        operator: FilterOperator.AND,
+        constraints: [{ value: '', matchMode: FilterMatchMode.CONTAINS }],
+    },
+});
+</script>
 
 <template>
-    <DataTableAdapter prop-name="users" v-slot="props" :rows="15" :filters="filters">
-        <Button label="Clear" @click="props.clearFilters" />
-        <input v-model="filters.global.constraints[0].value" @keyup="props.manualFilter(filters)">
+    <DataTableAdapter
+        v-slot="table"
+        prop-name="users"
+        :rows="15"
+        :filters="filters"
+        :preserve-state="true"
+    >
+        <div>
+            <input
+                v-model="filters.global.constraints[0].value"
+                type="search"
+                @input="table.manualFilter(filters)"
+            >
+            <Button label="Clear filters" @click="table.clearFilters" />
+        </div>
+
         <DataTable
-            :first="props.first"
-            :sort-field="props.currentSort[0]?.field"
-            :sort-order="props.currentSort[0]?.order"
+            v-model:filters="filters"
+            data-key="id"
+            filter-display="menu"
+            lazy
+            paginator
             removable-sort
             sort-mode="multiple"
-            data-key="id"
-            @page="props.page"
-            @filter="props.filter"
-            filter-display="menu"
-            @sort="props.sort"
-            v-model:filters="filters"
-            :loading="props.loading"
-            lazy
-            :rows="props.rows"
-            paginator
-            :total-records="props.total"
-            :value="props.value">
-            <Column field="id" :sortable="true" header="Id">
-                <template #filter="{filterModel, filterCallback}">
-                    <input v-model="filterModel.value" type="text" @input="filterCallback()" class="p-column-filter"
-                           placeholder="Search by country" />
+            :first="table.first"
+            :loading="table.loading"
+            :rows="table.rows"
+            :sort-field="table.currentSort[0]?.field"
+            :sort-order="table.currentSort[0]?.order"
+            :total-records="table.total"
+            :value="table.value"
+            @filter="table.filter"
+            @page="table.page"
+            @sort="table.sort"
+        >
+            <Column field="id" header="ID" sortable />
+            <Column field="name" header="Name" sortable>
+                <template #filter="{ filterModel, filterCallback }">
+                    <input v-model="filterModel.value" @input="filterCallback()">
                 </template>
             </Column>
-            <Column field="name" :sortable="true" header="Nome">
-                <template #filter="{filterModel, filterCallback}">
-                    <input v-model="filterModel.value" type="text" @input="filterCallback()" class="p-column-filter"
-                           placeholder="Search by country" />
-                </template>
-            </Column>
-            <Column field="email" :sortable="true" header="Email" />
+            <Column field="email" header="Email" sortable />
         </DataTable>
     </DataTableAdapter>
 </template>
-
-<script lang="ts">
-    import { defineComponent } from "vue";
-    import { DataTableAdapter } from "laraveltoolkit";
-    import DataTable from "primevue/datatable";
-    import Column from "primevue/column";
-    import Button from "primevue/button";
-    import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
-
-    export default defineComponent({
-        name: "TableAdapter",
-        components: {
-            Button,
-            DataTableAdapter,
-            DataTable,
-            Column
-        },
-        data() {
-            return {
-                filters: {
-                    global: { operator: FilterOperator.AND, constraints: [{ value: '', matchMode: 'contains' }] },
-                    id: {
-                        operator: FilterOperator.AND,
-                        constraints: [{ value: '', matchMode: FilterMatchMode.CONTAINS }]
-                    },
-                    name: {
-                        operator: FilterOperator.AND,
-                        constraints: [{ value: '', matchMode: FilterMatchMode.CONTAINS }]
-                    },
-                },
-            }
-        },
-    });
-</script>
 ```
 
-> Some props are required that you pass to `DataTable` to get all features from adapter.
->
-> - **page**: You must pass to `@page` event to handle page changes.
-> - **sort**: You must pass to `@sort` event to handle sort changes.
-> - **filter**: You must pass to `@filter` event to handle filter changes.
-> - **loading**: You must pass to `loading` prop to handle loading fallback.
-> - **rows**: You must pass to `rows` prop to work.
-> - **total**: You must pass to `total-records` prop to work.
-> - **value**: You must pass to `value` prop to work.
+Required connections are `@page`, `@sort`, `@filter`, `loading`, `rows`, `total-records`, and `value`. When preserving
+state, also connect `first`, `sort-field`, and `sort-order` as shown.
+
+Useful adapter props:
+
+| Prop | Purpose |
+|---|---|
+| `propName` | Required Inertia prop containing the paginator. |
+| `rows` | Records requested per page. |
+| `filters` | PrimeVue filter state. |
+| `manualFilterDebounceWait` | Debounce delay for `manualFilter()`. |
+| `globalFilterName` | Key used for the global filter; defaults to `global`. |
+| `preserveState` | Preserves page, sorting, and filters across visits. |
 
 ## DataView
 
-An example of how use with DataView.
-
-Some points of `attention` are:
-
-- Remember to put lazy prop on DataView.
-- You must create filter data prop to use the filters function. Remember to pass it on DataViewAdapter and DataView.
-
-Available adapter props:
-
-- **filters**: Here you will pass your filters like you pass to DataView.
-- **filterDebounceWait**: How many milliseconds filter will debounce before do it.
-- **globalFilterName**: Here you configure if needed the global filter key. On this filter, it will search all (or
-  configured in Laravel
-- **propName (required)**: Prop that will be load. Configured by you on Inertia props on Laravel. Eg.: users.
-- **rows**: How many rows per page adapter will get.
-- **sortField**: Table field that will be sorted.
-- **sortOrder**: Sort direction (asc or desc).
+`DataViewAdapter` uses the same backend response and a smaller set of bindings:
 
 ```vue
+<script setup lang="ts">
+import { ref } from 'vue';
+import DataView from 'primevue/dataview';
+import { DataViewAdapter } from 'laraveltoolkit';
+
+const filters = ref({
+    global: { value: '', matchMode: 'contains' },
+});
+</script>
 
 <template>
-    <DataViewAdapter prop-name="users" v-slot="props" :rows="5" :filters="filters">
-        <Button label="Clear" @click="props.clearFilters" />
-        <input v-model="filters.global.value">
+    <DataViewAdapter
+        v-slot="view"
+        prop-name="users"
+        :rows="12"
+        :filters="filters"
+    >
+        <input v-model="filters.global.value" type="search">
+
         <DataView
             data-key="id"
-            @page="props.page"
             lazy
-            :rows="props.rows"
             paginator
-            :total-records="props.total"
-            :value="props.value">
-            <template #list="slotProps">
-                <div class="flex flex-col">
-                    <div v-for="(item, index) in slotProps.items" :key="index">
-                        <div class="flex flex-col sm:flex-row sm:items-center p-6 gap-4"
-                             :class="{ 'border-t border-surface-200 dark:border-surface-700': index !== 0 }">
-                            <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
-                                <div class="flex flex-row md:flex-col justify-between items-start gap-2">
-                                    <div>
-                                        <span class="font-medium text-surface-500 dark:text-surface-400 text-sm">{{ item.category }}</span>
-                                        <div class="text-lg font-medium mt-2">{{ item.name }}</div>
-                                    </div>
-                                    <div class="bg-surface-100 p-1" style="border-radius: 30px">
-                                        <div class="bg-surface-0 flex items-center gap-2 justify-center py-1 px-2">
-                                            <span class="text-surface-900 font-medium text-sm">{{ item.email }}</span>
-                                            <i class="pi pi-star-fill text-yellow-500"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="flex flex-col md:items-end gap-8">
-                                    <span class="text-xl font-semibold">{{ item.id }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            :rows="view.rows"
+            :total-records="view.total"
+            :value="view.value"
+            @page="view.page"
+        >
+            <template #list="{ items }">
+                <article v-for="user in items" :key="user.id">
+                    <strong>{{ user.name }}</strong>
+                    <span>{{ user.email }}</span>
+                </article>
             </template>
         </DataView>
     </DataViewAdapter>
 </template>
-
-<script lang="ts">
-    import { defineComponent } from "vue";
-    import { DataViewAdapter } from "laraveltoolkit";
-    import DataView from "primevue/dataview";
-    import Button from "primevue/button";
-
-    export default defineComponent({
-        name: "ViewAdapter",
-        components: {
-            Button,
-            DataViewAdapter,
-            DataView,
-        },
-        data() {
-            return {
-                filters: {
-                    global: { value: '', matchMode: 'contains' },
-                    id: { value: '', matchMode: 'contains' },
-                    name: { value: '', matchMode: 'contains' }
-                },
-            }
-        },
-        mounted() {
-        }
-    });
-</script>
 ```
 
-> Some props are required that you pass to `DataView` to get all features from adapter.
->
-> - **page**: You must pass to `@page` event to handle page changes.
-> - **rows**: You must pass to `rows` prop to work.
-> - **total**: You must pass to `total-records` prop to work.
-> - **value**: You must pass to `value` prop to work.
+The required DataView connections are `@page`, `rows`, `total-records`, and `value`. Adapter props also support
+`filterDebounceWait`, `globalFilterName`, `sortField`, and `sortOrder`.
+
+## Joins and aliases
+
+For joined queries, select every filterable/sortable column explicitly and alias computed fields. The backend maps a
+frontend field to a selected qualified column or alias where possible:
+
+```php
+Product::query()
+    ->select('products.*', 'users.name as user_name')
+    ->join('users', 'users.id', '=', 'products.user_id')
+    ->primevueData(globalFilterColumns: ['products.name', 'users.name']);
+```
+
+Keep adapter field names controlled by your own component definitions. Do not pass arbitrary user-provided field
+names into query construction outside the adapter contract.
+
+---
+
+[Back to the documentation index](README.md)

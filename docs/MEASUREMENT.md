@@ -3,6 +3,9 @@
 Measurement provides immutable-style value objects for typed measurements. Length, weight, volume, area, temperature,
 speed, duration, pressure, energy, and power are currently supported.
 
+The feature requires PHP's BCMath and Intl extensions. All measurement helpers are loaded automatically after Composer
+installs the package.
+
 ```php
 use Laraveltoolkit\Measurement\Enums\AreaUnit;
 use Laraveltoolkit\Measurement\Enums\DurationUnit;
@@ -332,3 +335,7 @@ length(2, 'nm')->div(3)->referenceValueString();
 length(2, 'nm')->div(3, RoundingMode::TowardsZero)->referenceValueString();
 // 0.666666666666666666666666
 ```
+
+---
+
+[Back to the documentation index](README.md)

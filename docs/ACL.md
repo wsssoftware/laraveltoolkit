@@ -1,278 +1,263 @@
-## ACL
+# Access control (ACL)
 
-A minimalist implementation of an access control level
+The ACL module stores application-specific policies and optional roles in a one-to-one record for each user. It
+registers every rule and role as a normal Laravel Gate ability, so controllers, routes, Blade, and policies can use
+Laravel's standard authorization API.
 
-Before you need create vendor migrations running:
+Abilities follow these names:
+
+- policy rules: `{policy-column}::{rule-key}`, for example `users::update`;
+- roles: `roles::{enum-value}`, for example `roles::admin`.
+
+## Setup
+
+### 1. Publish and edit the migration
 
 ```bash
 php artisan vendor:publish --tag=laraveltoolkit-migrations
 ```
 
-after you must create table columns for each policy that you want.
+Before migrating, add one nullable JSON column for every policy. Keep `id`, `roles`, and `updated_at` as generated:
 
 ```php
-/// on database/migrations/2024_10_22_104112_create_user_permissions_table
- Schema::create('user_permissions', function (Blueprint $table) {
-    $table->id();
-    $table->foreignId('user_id')
-        ->unique()
+Schema::create('user_permissions', function (Blueprint $table) {
+    $table->foreignId('id')
+        ->primary()
         ->constrained('users')
         ->cascadeOnUpdate()
         ->cascadeOnDelete();
-    // User roles is an internal feature, don't use as a policy
-    $table->json('roles')->default('[]');
-    $table->json('users')->nullable(); // <-- HERE
-    $table->json('products')->nullable(); // <-- HERE
-    $table->json('categories')->nullable(); // <-- HERE
+
+    $table->json('roles');
+    $table->json('users')->nullable();
+    $table->json('products')->nullable();
     $table->timestamp('updated_at')->nullable();
-}
-//...
+});
 ```
 
-> You can create alter table after as you need to create more policy columns.
+The permission record intentionally shares its primary key with the user. Add new nullable JSON columns in a later
+migration whenever you introduce more policies.
 
-after make UserPermission model running command:
+```bash
+php artisan migrate
+```
+
+### 2. Generate the permission model
 
 ```bash
 php artisan make:acl-model
 ```
 
-Register it on you `AppServiceProvider`
+Declare policies inside the generated model:
+
+```php
+use Laraveltoolkit\ACL\UserPermission as BaseUserPermission;
+
+final class UserPermission extends BaseUserPermission
+{
+    protected function declarePoliciesAndRoles(): void
+    {
+        self::registryPolicy('users', 'Users', 'Manage application users')
+            ->crud()
+            ->export();
+
+        self::registryPolicy('products', 'Products', 'Manage the product catalog')
+            ->read()
+            ->create()
+            ->update()
+            ->rule('publish', 'Publish', 'Publish products');
+    }
+}
+```
+
+`crud()` adds `create`, `read`, `update`, and `delete`. Other shortcuts include `cancel`, `download`, `execute`,
+`export`, `import`, `print`, `share`, and `upload`. Use `rule()` for application-specific abilities. Each shortcut and
+`rule()` accepts an optional HTTP denial status.
+
+> [!NOTE]
+> The policy column declared in PHP must also exist as a nullable JSON column on `user_permissions`.
+
+### 3. Register the model
+
+Register the model before the application finishes booting, usually in `AppServiceProvider`:
 
 ```php
 use App\Models\UserPermission;
 use Laraveltoolkit\Facades\ACL;
 
-//...
 public function boot(): void
 {
     ACL::withModel(UserPermission::class);
-    // if you want to use role system, create a string enum and declare its FQN here
-     ACL::withModel(UserPermission::class)
-            ->withRolesEnum(UserRole::class);
 }
 ```
 
-> Role Enum is a more generic way to allow or deny user to access some part of your application.
-> It must be a string Enum and implement `Laraveltoolkit\ACL\HasDenyResponse` interface to be used.
-
-On your `UserPermission` created model declare your firsts policies and rules:
+Add `HasUserPermission` to the authenticatable user model:
 
 ```php
-protected static function declarePoliciesAndRoles(): void
-{
-  self::registryPolicy('users', 'Users', 'Manage system users')
-      ->crud()
-      ->rule('export', 'Export', 'Export users')
-  // OR its equivalent
-  self::registryPolicy('users', 'Users', 'Manage system users')
-      ->rule('create', 'Create', 'Create users')
-      ->rule('read', 'Read', 'Read users')
-      ->rule('update', 'Update', 'Update users')
-      ->rule('delete', 'Delete', 'Delete users')
-      ->rule('export', 'Export', 'Export users');
-}
-```
-
-On your `User` Model add `HasUserPermission` trait to configure relations and other things:
-
-```php
-
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laraveltoolkit\ACL\HasUserPermission;
 
-class User extends Authenticatable
+final class User extends Authenticatable
 {
     use HasUserPermission;
+}
 ```
 
-To use gate on frontend registry it on `HandleInertiaRequests`
+The relation creates the user's empty permission record on first access.
+
+## Authorizing policy rules
+
+Use the generated abilities through Laravel Gate or the `can` middleware:
 
 ```php
+use Illuminate\Support\Facades\Gate;
 
+Gate::allows('users::read');
+Gate::authorize('products::publish');
+
+Route::post('/products', StoreProductController::class)
+    ->middleware('can:products::create');
+```
+
+## Editing permissions
+
+Permissions may be changed individually, in bulk, or by policy:
+
+```php
+$permissions = $user->userPermission;
+
+$permissions->grant('users::read')
+    ->grant('products::publish')
+    ->deny('users::delete')
+    ->save();
+
+$permissions->grantAll('products')->save();
+$permissions->denyAll('users')->save();
+
+$permissions->fillPolicies([
+    'users::create' => true,
+    'users::read' => true,
+    'users::update' => false,
+    'users::delete' => false,
+]);
+$permissions->save();
+```
+
+Calling `grantAll()` or `denyAll()` without a policy applies the change to every declared policy.
+
+## Roles
+
+Roles are optional and use a string-backed enum implementing `HasDenyResponse`:
+
+```php
+use Illuminate\Auth\Access\Response;
+use Laraveltoolkit\ACL\HasDenyResponse;
+
+enum UserRole: string implements HasDenyResponse
+{
+    case ADMIN = 'admin';
+    case SUPPORT = 'support';
+
+    public function denyResponse(): Response
+    {
+        return match ($this) {
+            self::ADMIN => Response::denyAsNotFound(),
+            self::SUPPORT => Response::denyWithStatus(403),
+        };
+    }
+}
+```
+
+Register it together with the permission model:
+
+```php
+ACL::withModel(UserPermission::class)
+    ->withRolesEnum(UserRole::class);
+```
+
+Then grant, revoke, and authorize roles:
+
+```php
+$permissions->grantRole(UserRole::ADMIN)->save();
+$permissions->denyRole(UserRole::SUPPORT)->save();
+$permissions->grantAllRoles()->save();
+$permissions->denyAllRoles()->save();
+
+Gate::authorize('roles::admin');
+```
+
+### Role middleware
+
+After registering a roles enum, the package exposes the `user_roles` middleware alias:
+
+```php
+// Require both roles.
+Route::middleware('user_roles:admin,support')->group(function () {
+    // ...
+});
+
+// Require support and reject users who also have admin.
+Route::middleware('user_roles:support,!admin')->group(function () {
+    // ...
+});
+```
+
+Every unprefixed role is required. Prefixing a role with `!` explicitly rejects users who have it.
+
+## Sharing permissions with Inertia
+
+Expose only Gate-ready boolean values from `HandleInertiaRequests`:
+
+```php
+use Illuminate\Http\Request;
 use Laraveltoolkit\Facades\ACL;
 
 public function share(Request $request): array
 {
     return [
         ...parent::share($request),
-        'auth' [
-            //...
-            'acl' => fn() => ACL::gatePermissions(),
+        'auth' => [
+            'user' => $request->user(),
+            'acl' => fn () => ACL::gatePermissions(),
         ],
     ];
 }
 ```
 
-### Editing an policy
-
-You can edit using:
+To build a permission editor, return the complete policy metadata from a controller:
 
 ```php
-$user = \Illuminate\Support\Facades\Auth::user();
-
-$userPermission = $user->userPermission
-
-$users = $userPermission->users->create->value = true;
-// OR
-$userPermission->users = [
-    'create' => true,
-    'read' => true,
-    'update' => true,
-    'delete' => true,
-];
-// OR
-$userPermission->fillPolicies([
-    'users::create' => true,
-    'users::read' => true,
-    'users::update' => true,
-    'users::delete' => true,
-]);
-// OR
-$userPermission->grantAll();
-// OR
-$userPermission->grantAll('users');
-// OR
-$userPermission->grant('users::create');
-// OR
-$userPermission->grantAllRoles();
-// OR
-$userPermission->grantRole(UserRole::ADMIN);
-// OR
-$userPermission->denyAll();
-// OR
-$userPermission->denyAll('users');
-// OR
-$userPermission->deny('users::create');
-// OR
-$userPermission->denyAllRoles();
-// OR
-$userPermission->denyRole(UserRole::ADMIN);
-//then
-$userPermission->save();
-```
-
-If you want edit on frontend:
-
-```php
-
-use Laraveltoolkit\Facades\ACL;
 use Laraveltoolkit\ACL\Policy;
-// on controller or equivalent
-public function create(=): Response
-{
-    return Inertia::render('Tests/Laraveltoolkit/ACL', [
-        'permissions' => ACL::permissions(),
-        // if you want to filter edit permissions available por users
-        'permissions' => ACL::permissions(filter: function (Policy $policy) {
-            return !str_starts_with($policy->column, 'admin_');
-        }),
-    ]);
-}
+use Laraveltoolkit\Facades\ACL;
 
-public function store(Request $request): RedirectResponse
-{
-    $up = \Illuminate\Support\Facades\Auth::user()->userPermission;
-    $up->fillPolicies($request->permissions);
-    $up->save();
-    return retirect()->route('index');
-}
+return Inertia::render('Users/Permissions', [
+    'permissions' => ACL::permissions(
+        filter: fn (Policy $policy) => ! str_starts_with($policy->column, 'internal_'),
+    ),
+]);
 ```
 
-```vue
-<template>
-    <form @submit.prevent="submit">
-        <UserPermissionsEditor v-model="form.permissions" :permissions="permissions"/>
-        <button type="submit">Enviar</button>
-    </form>
-</template>
-
-<script lang="ts">
-import {defineComponent, PropType} from "vue";
-import {UserPermissions, UserPermissionsEditor} from "laraveltoolkit";
-import {useForm} from "@inertiajs/vue3";
-
-export default defineComponent({
-    name: "ACL" ,
-    components: {UserPermissionsEditor},
-    props: {
-        permissions: {
-            type: Array as PropType<UserPermissions>,
-            required: true,
-        }
-    },
-    data() {
-        return {
-            form: useForm({
-                permissions: {}
-            }),
-        };
-    },
-    methods: {
-        submit(): void {
-            this.form.post(route('send'))
-        }
-    },
-});
-</script>
-```
-
-### Usage
-
-On backend, you will use like a normal gate, but pay attention on ability name:
-
-```php
-// Policy rule: policyColumn + :: + ruleName
-\Illuminate\Support\Facades\Gate::allows('users::create')
-// Role: roles :: + roleName
-\Illuminate\Support\Facades\Gate::allows('roles::admin')
-```
-
-On frontend, when you have been installed the VueJS plugin, you can use `$gate class`, `Gate component` or
-`Gate directive`.
+The companion Vuetoolkit package provides `UserPermissionsEditor`, the `$gate` helper, `Gate` component, and
+`v-gate` directive:
 
 ```vue
 <template>
     <Gate rule="allows" abilities="users::read">
-        <h1>Show this on has</h1>
-        <template #fallback>
-            <h1>Or show this on hasn't</h1>
-        </template>
+        <UsersTable />
+        <template #fallback>Access denied.</template>
     </Gate>
-    <button v-gate:allows="'users::read'">You see if you has</button>
-    <button v-gate:allows="'roles::admin'">You see if you has</button>
-    <button v-if="has">You see if you has</button>
+
+    <button v-gate:allows="'products::publish'">Publish</button>
+    <button v-if="$gate.allows('roles::admin')">Admin</button>
 </template>
-
-<script lang="ts">
-import {defineComponent} from "vue";
-import {GateDirective} from "laraveltoolkit";
-import {Gate} from "Laraveltoolkit";
-
-export default defineComponent({
-    name: "Example",
-    components: {Gate},
-    directives: {
-        gate: GateDirective,
-    },
-    computed: {
-        has(): boolean {
-            return this.$gate.allows('users.read')
-        }
-    },
-});
-</script>
 ```
 
-You can also use the `Middleware` to use a role to some route or route group:
+Treat frontend checks as presentation only; always authorize the corresponding action on the server.
 
-```php
-Route::prefix('admin-l1')->group(function() {
-// Your routes here
-})->middleware('user_roles:admin,admin_lvl2')
+## Testing
 
-Route::prefix('admin-l2')->group(function() {
-// Your routes here
-})->middleware('user_roles:admin_lvl2,!admin')
-```
+Laravel's normal authorization assertions and Gate calls work with ACL abilities. When testing permission changes,
+save the permission model before authorizing because Gate resolves the persisted user relation.
 
+---
 
+[Back to the documentation index](README.md)
