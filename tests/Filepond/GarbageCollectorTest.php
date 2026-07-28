@@ -13,7 +13,7 @@ it('test the garbage collector', function () {
     $id = Str::uuid()->toString();
     $path = Filepond::path($id, 'foo.bar');
     $disk->put($path, 'test');
-    sleep(1);
+    $this->travel(1)->second();
 
     Filepond::garbageCollector();
 

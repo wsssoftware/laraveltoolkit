@@ -44,6 +44,8 @@ it('test collator sort with natural values', function () {
 
     expect($collection->collatorSort(SORT_NATURAL)->values()->all())
         ->toBe(['item 1', 'item 2', 'item 10'])
+        ->and($collection->collatorSort(SORT_NATURAL | SORT_FLAG_CASE)->values()->all())
+        ->toBe(['item 1', 'item 2', 'item 10'])
         ->and($collection->collatorSort(SORT_NATURAL, SORT_DESC)->values()->all())
         ->toBe(['item 10', 'item 2', 'item 1']);
 });

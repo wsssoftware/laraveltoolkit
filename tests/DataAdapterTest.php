@@ -1,8 +1,21 @@
 <?php
 
+use Illuminate\Database\MySqlConnection;
+use Laraveltoolkit\DataAdapter\MatchMode;
 use Laraveltoolkit\Tests\Model\Product;
 use Laraveltoolkit\Tests\Model\User;
 use Laraveltoolkit\Tests\UserResource;
+
+it('uses the MySQL text cast for textual filters', function () {
+    $query = new MySqlConnection(null, '', '', ['driver' => 'mysql'])->query();
+
+    MatchMode::CONTAINS->apply($query, 'name', 'FOO', 'and');
+
+    expect($query->toSql())
+        ->toBe('select * where LOWER(CAST(`name` AS CHAR)) LIKE ?')
+        ->and($query->getBindings())
+        ->toBe(['%foo%']);
+});
 
 it('test base functionality', function () {
     User::factory()->count(100)->create();

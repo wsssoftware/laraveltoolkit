@@ -58,6 +58,8 @@ class TestCase extends Orchestra
         config()->set('database.default', 'testing');
         config()->set('app.locale', 'pt_BR');
         config()->set('app.key', 'base64:Z1sxfk3d54CWnssAxvEFshoZVGmAO7KrbZGMzU5xko4=');
+        config()->set('app.maintenance.driver', 'cache');
+        config()->set('app.maintenance.store', 'array');
 
         $migrationStoredAsset = include __DIR__.'/../database/migrations/create_stored_assets_table.php.stub';
         $migrationStoredAsset->up();
