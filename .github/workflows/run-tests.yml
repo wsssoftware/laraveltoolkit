@@ -111,7 +111,7 @@ jobs:
         run: composer test-coverage -- --ci --coverage-clover=./.build/cache/coverage.xml
 
       - name: "Publish coverage report to Codecov"
-        uses: "codecov/codecov-action@v7.0.0"
+        uses: "codecov/codecov-action@v7.1.1"
         with:
           files: ./.build/cache/coverage.xml
         env:
